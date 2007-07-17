@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="fr">
+<head>
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>VTP - Edition des suivis</title>
+</head>
+<body>
+  <h2>Edition des suivis</h2><br>
+
+  <form action method="post" enctype="text/plain">
+    <fieldset><legend>Ajouter un suivi</legend>
+      <label for="title">Titre du suivi : </label>
+      <input type="text" name="Title" size="50" maxlength="70" id="title"><br>
+      <label for="feed">Flux RSS : </label>
+      <select name="feeds" size="1">
+        <option>Workbench - http://www.cadenhead.org/workbench/rss
+        <option>WebReference News - http://www.webreference.com/webreference.rdf
+        <option>Scripting News - http://www.scripting.com/rss.xml
+        <option>Computerworld News - http://www.computerworld.com/news/xml/10/0,5009,,00.xml
+      </select><br>
+      <label for="regex">Filtre / Expression régulière : </label>
+      <input type="text" name="Regex" size="70" maxlength="100" id="regex"><br>
+      <input type="submit" value=">> Ajouter">
+    </fieldset>
+  </form>
+  <br>
+
+  <h3>Suivis existant dans la base de données VTP</h3><br>
+
+  <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
+  
+    <tr>
+      <th>Titre</th>
+      <th>Flux RSS</th>
+      <th>Filtre</th>
+      <th>Suivi</th>
+      <th>Modifier</th>
+      <th>Supprimer</th>
+    </tr>
+    
+    <tr>
+      <td style="text-align: left; vertical-align: middle;">Workbench - 'RSS' + 'specification'</td>
+      <td style="text-align: left; vertical-align: middle;">Workbench - <a href="http://www.cadenhead.org/workbench/rss">URL</a></td>
+      <td style="text-align: left; vertical-align: middle;">specification + RSS</td>
+      <td style="text-align: center; vertical-align: middle;">oui</td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="O"></td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="X"></td>
+    </tr>
+    
+    <tr>
+      <td style="text-align: left; vertical-align: middle;">WebReference News - 'JavaScript' + 'animation'</td>
+      <td style="text-align: left vertical-align: middle;">WebReference News - <a href="http://www.webreference.com/webreference.rdf">URL</a></td>
+      <td style="text-align: left; vertical-align: middle;"></td>
+      <td style="text-align: center; vertical-align: middle;">oui</td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="O"></td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="X"></td>
+    </tr>
+    
+    <tr>
+      <td style="text-align: left; vertical-align: middle;">Scripting News - 'indexing' + 'engine'</td>
+      <td style="text-align: left; vertical-align: middle;">Scripting News - <a href="http://www.scripting.com/rss.xml">URL</a></td>
+      <td style="text-align: left; vertical-align: middle;"></td>
+      <td style="text-align: center; vertical-align: middle;">oui</td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="O"></td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="X"></td>
+    </tr>
+    
+    <tr>
+      <td style="text-align: left; vertical-align: middle;">Computerworld News - 'Oracle' + ('vulnerabilities' OU 'vulnerability')</td>
+      <td style="text-align: left; vertical-align: middle;">Computerworld News - <a href="http://www.computerworld.com/news/xml/10/0,5009,,00.xml">URL</a></td>
+      <td style="text-align: left; vertical-align: middle;"></td>
+      <td style="text-align: center; vertical-align: middle;">oui</td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="O"></td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="X"></td>
+    </tr>
+    
+    <tr>
+      <td style="text-align: left; vertical-align: middle;">Computerworld News - 'IBM' + 'Unix'</td>
+      <td style="text-align: left; vertical-align: middle;">Computerworld News - <a href="http://www.computerworld.com/news/xml/10/0,5009,,00.xml">URL</a></td>
+      <td style="text-align: left; vertical-align: middle;"></td>
+      <td style="text-align: center; vertical-align: middle;">oui</td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="O"></td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="X"></td>
+    </tr>
+    
+    <tr>
+      <td style="text-align: left; vertical-align: middle;">...</td>
+      <td style="text-align: left; vertical-align: middle;">...</td>
+      <td style="text-align: left; vertical-align: middle;">...</td>
+      <td style="text-align: center; vertical-align: middle;"></td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="O"></td>
+      <td style="text-align: center; vertical-align: middle;"><input type="submit" value="X"></td>
+    </tr>
+
+  </table>
+  
+</body>
+</html>
