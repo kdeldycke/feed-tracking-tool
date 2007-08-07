@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>Outil de Veille Technologique</title>
+	<%= stylesheet_link_tag 'style' %>
+</head>
+<body>
+	<div id="content">
+		<p align=right>
+			<%= session[:username] %>
+			<%= link_to 'D&eacute;connexion', :controller => 'login', :action => 'logout' %>
+		</p>
+		<h1>Outil de Veille Technologique</h1>
+		<% unless flash[:notice].blank? %>
+			<div id="notification"><%= flash[:notice] %></div>
+		<% end %>
+		<%= yield %>
+	</div>
+</body>
+</html>

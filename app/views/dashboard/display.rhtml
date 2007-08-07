@@ -1,0 +1,44 @@
+<h2>Tableau de bord</h2><br>
+
+
+<p><h4>Vos suivis en cours</h4></p>
+
+<table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
+
+	<tr>
+	  <th>Titre du suivi</th>
+	  <th>Flux RSS</th>
+	  <th>Fr&eacute;quence (j)</th>
+	
+	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |s| -%>
+	    <tr>
+	    	<td><%= Tracker.find_by_id(s.tracker_id).title %></td>
+			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title %></td>
+			<td align="center"><%= s.frequency %></td>
+	    </tr>
+	<% end -%>
+
+</table>
+
+<p><h4>Articles retenus en attente d'envoi</h4></p>
+
+<table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
+
+	<tr>
+	  <th>Date</th>
+	  <th>Article</th>
+	  <th>Description</th>
+	  <th>Suivi</th>
+	  
+	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |t| -%>
+		<% Article.find(:all, :conditions => [ "tracker_id = ?", t.tracker_id ]).each do |a| -%>
+		    <tr>
+		    	<td><%= a.publication_date %></td>
+				<td><%= a.title %></td>
+				<td><%= a.description %></td>
+		    	<td><%= Tracker.find_by_id(a.tracker_id).title %></td>
+		    </tr>
+		<% end -%>
+	<% end -%>
+
+</table>

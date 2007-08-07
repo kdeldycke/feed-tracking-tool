@@ -1,0 +1,23 @@
+<h2>Gestion des flux RSS</h2><br>
+
+<% form_for :rssfeed do |f| %>
+<p>
+  URL: <%= f.text_field :url %> <%= submit_tag 'Ajouter'%>
+</p><br />
+<% end %>
+
+<p><h4>Flux RSS existant dans la base de donn&eacute;es OVT</h4></p>
+
+<ul id="rss_feeds">
+	<% Rssfeed.find(:all).each do |j| -%>	<!-- Pour chaque entrée de la table rssfeed -->
+        <li>
+            <% rss(j.url) %>										<!-- récupération du flux RSS à partir de l'url -->
+			<% j.update_attribute :title, @title %>					<!-- MAJ du champ title -->
+			<% j.update_attribute :description, @description %>		<!-- MAJ du champ description -->
+            <h4><%= link_to @title, @link %></h4><br />
+			<%= @description %><br />
+			<%= link_to_image 'rss.gif', j.url %><br />
+			<%= link_to 'Supprimer', url_for(:action => 'destroy', :id => j.id) %><br />
+        </li>
+	<% end -%>
+</ul>

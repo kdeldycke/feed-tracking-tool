@@ -1,0 +1,47 @@
+<h2>Edition des suivis</h2><br>
+
+<% form_for :tracker do |f| %>		<!-- Formulaire de remplissage de l'entrée créée dans la table tracker -->
+<p>
+  Titre du suivi:
+  <%= f.text_field :title %>		<!-- Champ title -->
+</p>
+
+<p>
+  Flux RSS:
+  <%= collection_select(:rssfeed, :id, @feeds, :id, :title) %>	<!-- Liste déroulante contenant les flux RSS existant -->
+</p>
+
+<p>
+  Filtre / Expression r&eacute;guli&egrave;re:
+  <%= f.text_field :regex %>						<!-- Champ regex -->
+</p>
+<p>
+  <%= submit_tag 'Ajouter'%>
+</p>
+<% end %>
+
+<p><h4>Suivis existant dans la base de donn&eacute;es OVT</h4></p>
+
+<table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
+
+	<tr>
+	  <th>Titre</th>
+	  <th>Flux RSS</th>
+	  <th>Filtre</th>
+	  <th>Suivi</th>
+	  <th>Modifier</th>
+	  <th>Supprimer</th>
+	</tr>
+	
+	<% Tracker.find(:all).each do |j| -%>
+	    <tr>
+	    	<td><%= j.title %></td>
+			<td><%= Rssfeed.find_by_id(j.rssfeed_id).title %></td>
+			<td><%= j.regex %></td>
+			<td><%=  %></td>
+			<td><%=  %></td>
+			<td><%= link_to 'Supprimer', url_for(:action => 'destroy', :id => j.id) %></td>
+	    </tr>
+	<% end -%>
+
+</table>

@@ -1,0 +1,36 @@
+<h2>Gestion des abonnements aux suivis</h2><br>
+
+
+<% form_for :subscription do |f| %>		<!-- Formulaire de remplissage de l'entrée créée dans la table subscription -->
+<p>
+  Suivi:
+  <%= collection_select(:tracker, :id, @trackers, :id, :title) %>	<!-- Liste déroulante contenant les suivis existant -->
+</p>
+<p>
+  Fr&eacute;quence de r&eacute;ception (en jours):
+  <%= f.text_field :frequency %>
+</p>
+  <%= submit_tag 'Ajouter'%>
+</p>
+<% end %>
+
+<p><h4>Vos suivis en cours</h4></p>
+
+<table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
+
+	<tr>
+	  <th>Titre du suivi</th>
+	  <th>Flux RSS</th>
+	  <th>Fr&eacute;quence (j)</th>
+	  <th>Annuler</th>
+	
+	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |j| -%>
+	    <tr>
+	    	<td><%= Tracker.find_by_id(j.tracker_id).title %></td>
+			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title %></td>
+			<td align="center"><%= j.frequency %></td>
+			<td align="center"><%= link_to 'Annuler', url_for(:action => 'destroy', :id => j.id) %></td>
+	    </tr>
+	<% end -%>
+
+</table>
