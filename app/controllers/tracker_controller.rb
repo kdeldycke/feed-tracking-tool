@@ -15,10 +15,16 @@ class TrackerController < ApplicationController
   end
   
   def destroy
-    r=Tracker.find(params[:id])   # recherche dans la base de données tracker du suivi à supprimer
-    r.destroy                     # suppression
-    r.save                        # sauvegarde
-    flash[:notice] = 'Suivi supprim&eacute; avec succ&egrave;s'
+    t=Tracker.find(params[:id])   # recherche dans la base de données tracker du suivi à supprimer
+    
+    d = t.subscriptions_count   # on compte le nombre d'abonnements au suivi à supprimer
+    if d>0                      # si ce nombre est positif, on ne peut pas supprimer le suivi
+      flash[:warning] = 'Un ou plusieurs utilisateurs sont abonn&eacute;s a ce suivi : Suppression interdite tant que le ou les abonnements existent'
+    else
+      t.destroy                     # suppression
+      t.save                        # sauvegarde
+      flash[:notice] = 'Suivi supprim&eacute; avec succ&egrave;s'
+    end 
     redirect_to :controller => 'tracker', :action => 'edit'     # actualisation de la page
   end
   

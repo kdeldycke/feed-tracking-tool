@@ -44,4 +44,8 @@ class LoginController < ApplicationController
     redirect_to :action => "index"
   end
   
+  def profile
+    
+  end
+  
 end

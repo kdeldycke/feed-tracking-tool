@@ -6,6 +6,16 @@
 	<%= stylesheet_link_tag 'style' %>
 </head>
 <body>
+	
+	<ul id="navigation">
+        <li><%= link_to 'Tableau de bord', :controller => 'dashboard', :action => 'display' %></li>
+        <li><%= link_to 'Gestion des flux RSS', :controller => 'rssfeed', :action => 'manage' %></li>
+        <li><%= link_to 'Edition des suivis', :controller => 'tracker', :action => 'edit' %></li>
+        <li><%= link_to 'Gestion des abonnements aux suivis', :controller => 'subscription', :action => 'manage' %></li>
+        <li><%= link_to 'Suivis par utilisateur', :controller => 'recap', :action => 'users' %></li>
+		<li><%= link_to 'Utilisateurs par suivi', :controller => 'recap', :action => 'trackers' %></li>
+    </ul>
+    
 	<div id="content">
 		<p align=right>
 			<%= session[:username] %>
@@ -15,7 +25,11 @@
 		<% unless flash[:notice].blank? %>
 			<div id="notification"><%= flash[:notice] %></div>
 		<% end %>
+		<% unless flash[:warning].blank? %>
+			<div id="warning"><%= flash[:warning] %></div>
+		<% end %>
 		<%= yield %>
 	</div>
+	
 </body>
 </html>

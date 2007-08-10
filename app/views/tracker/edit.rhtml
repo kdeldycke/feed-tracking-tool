@@ -27,20 +27,22 @@
 	<tr>
 	  <th>Titre</th>
 	  <th>Flux RSS</th>
+	  <th>XML</th>
 	  <th>Filtre</th>
 	  <th>Suivi</th>
 	  <th>Modifier</th>
 	  <th>Supprimer</th>
 	</tr>
 	
-	<% Tracker.find(:all).each do |j| -%>
+	<% Tracker.find(:all).each do |j| -%>		<!-- Pour chaque entrée de la table tracker -->
 	    <tr>
-	    	<td><%= j.title %></td>
-			<td><%= Rssfeed.find_by_id(j.rssfeed_id).title %></td>
-			<td><%= j.regex %></td>
+	    	<td><%= j.title %></td>										<!-- Affiche le titre du suivi -->
+			<td><%= link_to Rssfeed.find_by_id(j.rssfeed_id).title, Rssfeed.find_by_id(j.rssfeed_id).link %></td>		<!-- recherche le flux RSS associé dans la table rssfeed -->
+			<td align="center"><%= link_to_image 'rss.gif', Rssfeed.find_by_id(j.rssfeed_id).url %></td>
+			<td><%= j.regex %></td>										<!-- Affiche l'expression régulière -->
 			<td><%=  %></td>
 			<td><%=  %></td>
-			<td><%= link_to 'Supprimer', url_for(:action => 'destroy', :id => j.id) %></td>
+			<td><%= link_to 'Supprimer', url_for(:action => 'destroy', :id => j.id) %></td>	<!-- Suppression (lien sur l'action destroy) -->
 	    </tr>
 	<% end -%>
 

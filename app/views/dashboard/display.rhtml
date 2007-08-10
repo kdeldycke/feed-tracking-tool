@@ -10,18 +10,20 @@
 	  <th>Flux RSS</th>
 	  <th>Fr&eacute;quence (j)</th>
 	
+	<!-- Pour chaque entrée de la table subscription dont le champ user_id correspond à l'utilisateur courant -->
 	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |s| -%>
 	    <tr>
-	    	<td><%= Tracker.find_by_id(s.tracker_id).title %></td>
-			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title %></td>
-			<td align="center"><%= s.frequency %></td>
+	    	<td><%= Tracker.find_by_id(s.tracker_id).title %></td>		<!-- Affiche le titre du suivi -->
+			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title %></td>	<!-- Affiche le titre du flux RSS associé -->
+			<td align="center"><%= s.frequency %></td>		<!-- Affiche la fréquence de réception -->
 	    </tr>
 	<% end -%>
 
 </table>
 
-<p><h4>Articles retenus en attente d'envoi</h4></p>
 
+<p><h4>Articles retenus en attente d'envoi</h4></p>
+	
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
 
 	<tr>
@@ -29,14 +31,19 @@
 	  <th>Article</th>
 	  <th>Description</th>
 	  <th>Suivi</th>
-	  
+	</tr>  
+	
+	<% script %>
+	
+	<!-- Pour chaque entrée de la table subscription dont le champ user_id correspond à l'utilisateur courant -->
 	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |t| -%>
+		<!-- Et pour chaque entrée de la table article correspondant aux suivis de l'utilisateur courant -->
 		<% Article.find(:all, :conditions => [ "tracker_id = ?", t.tracker_id ]).each do |a| -%>
-		    <tr>
-		    	<td><%= a.publication_date %></td>
-				<td><%= a.title %></td>
-				<td><%= a.description %></td>
-		    	<td><%= Tracker.find_by_id(a.tracker_id).title %></td>
+			<tr>
+		    	<td><%= a.publication_date %></td>	<!-- Affiche la date de publication de l'article -->
+				<td><%= link_to a.title, a.url %></td>				<!-- Affiche le titre de l'article -->
+				<td><%= a.content %></td>		<!-- Affiche la description de l'article -->
+		    	<td><%= Tracker.find_by_id(a.tracker_id).title %></td>	<!-- Affiche le titre du suivi -->
 		    </tr>
 		<% end -%>
 	<% end -%>
