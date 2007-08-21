@@ -60,7 +60,38 @@ end
 # Include your application configuration below
 ActiveRecord::Base.pluralize_table_names = false
 
+
+#msmtp
+ActionMailer::Base.delivery_method = :msmtp
+
+module ActionMailer
+  class Base
+    def perform_delivery_msmtp(mail)
+      #IO.popen("/usr/bin/msmtp -t -C /home/qdesert/.msmtprc -a gmail --", "w") do |sm|
+      IO.popen("/usr/bin/msmtp -t -C /home/qdesert/.msmtprc -a provider --", "w") do |sm|
+        sm.puts(mail.encoded.gsub(/\r/, ''))
+        sm.flush
+      end
+      if $? != 0
+        # why >> 8? because this is posix and exit code is in bits 8-16
+        logger.error("failed to send mail errno #{$? >> 8}")
+      end
+    end
+  end
+end
+
+
+#ActionMailer::Base.smtp_settings = {
+#:address => "smtp.uperto.com",
+#:port => "25",
+#:authentication => :plain,
+#:user_name => "qdesert",
+#:password => "*******"
+#}
+
 #require 'activeldap'
 
 require 'rss/2.0'
 require 'open-uri'
+
+#require 'smtp_tls'

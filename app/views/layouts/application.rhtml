@@ -9,6 +9,7 @@
 	
 	<ul id="navigation">
         <li><%= link_to 'Tableau de bord', :controller => 'dashboard', :action => 'display' %></li>
+		<li><%= link_to 'Historique', :controller => 'dashboard', :action => 'history' %></li>
         <li><%= link_to 'Gestion des flux RSS', :controller => 'rssfeed', :action => 'manage' %></li>
         <li><%= link_to 'Edition des suivis', :controller => 'tracker', :action => 'edit' %></li>
         <li><%= link_to 'Gestion des abonnements aux suivis', :controller => 'subscription', :action => 'manage' %></li>
