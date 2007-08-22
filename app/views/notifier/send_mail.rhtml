@@ -1,0 +1,13 @@
+Bonjour <%= @username %>, voici des articles susceptibles de vous intéresser:
+
+<ul id="articles">
+	<% ArticleToSend.find(:all).each do |o| %>
+		<li>
+		    <h4><%= link_to Article.find_by_id(o.article_id).title, Article.find_by_id(o.article_id).url %></h4>	<!-- Affiche le titre et le lien vers l'article -->
+			<p><b>Suivi: </b><%= Tracker.find_by_id(o.tracker_id).title %></p>	<!-- Affiche le titre du suivi -->
+			<p><%= Article.find_by_id(o.article_id).publication_date %></p>	<!-- Affiche la date de publication de l'article -->
+			<p><%= Article.find_by_id(o.article_id).content %><br /></p>	<!-- Affiche la description de l'article -->
+			<hr />
+		</li>
+	<% end %>
+</ul>
