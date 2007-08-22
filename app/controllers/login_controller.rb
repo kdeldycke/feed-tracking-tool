@@ -25,7 +25,7 @@ class LoginController < ApplicationController
   def authenticate
     if request.post?
       session[:username] = params[:login][:name]
-      Notifier.deliver_test_email(Profile.find_by_user_id(session[:username]).email)
+      #Notifier.deliver_test_email(Profile.find_by_user_id(session[:username]).email)
       redirect_to :controller => "dashboard", :action => "display"
     end
   end

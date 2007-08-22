@@ -9,6 +9,7 @@ class SubscriptionController < ApplicationController
       @selected_tracker = params[:tracker][:id]                         # récupération du suivi sélectionné
       @subscription.update_attribute :tracker_id, @selected_tracker     # MAJ du champ tracker_id dans la table subscription
       @subscription.update_attribute :user_id, session[:username]
+      @subscription.update_attribute :date_lastmail, Time.now
       flash[:notice] = 'Abonnement ajout&eacute; avec succ&egrave;s'
       redirect_to :controller => 'subscription', :action => 'manage'    # actualisation de la page
     end

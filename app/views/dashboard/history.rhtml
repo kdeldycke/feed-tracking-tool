@@ -1,0 +1,31 @@
+<h2>Historique</h2><br>
+
+<p><h4>Historique des articles retenus (envoy&eacute;s ou non)</h4></p>
+	
+<table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
+
+	<tr>
+	  <th>Date</th>
+	  <th>Article</th>
+	  <th>Description</th>
+	  <th>Suivi</th>
+	  <th>Etat</th>
+	</tr>  
+	
+	<% script %>
+	
+	<!-- Pour chaque entrée de la table subscription dont le champ user_id correspond à l'utilisateur courant -->
+	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |t| -%>
+		<!-- Et pour chaque entrée de la table article correspondant aux suivis de l'utilisateur courant -->
+		<% Article.find(:all, :conditions => [ "tracker_id = ?", t.tracker_id ]).each do |a| -%>
+			<tr>
+		    	<td><%= a.publication_date %></td>	<!-- Affiche la date de publication de l'article -->
+				<td><%= link_to a.title, a.url %></td>				<!-- Affiche le titre de l'article -->
+				<td><%= a.content %></td>		<!-- Affiche la description de l'article -->
+		    	<td><%= Tracker.find_by_id(a.tracker_id).title %></td>	<!-- Affiche le titre du suivi -->
+				<td><%=  %></td>
+		    </tr>
+		<% end -%>
+	<% end -%>
+
+</table>

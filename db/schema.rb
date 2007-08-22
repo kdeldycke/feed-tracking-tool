@@ -2,16 +2,22 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 15) do
+ActiveRecord::Schema.define(:version => 18) do
 
   create_table "article", :force => true do |t|
-    t.column "tracker_id",       :integer
     t.column "title",            :string
     t.column "url",              :string
     t.column "content",          :text
     t.column "publication_date", :datetime
     t.column "fetch_date",       :datetime
     t.column "sent_flag",        :boolean
+    t.column "rssfeed_id",       :integer
+  end
+
+  create_table "article_to_send", :force => true do |t|
+    t.column "article_id", :integer
+    t.column "tracker_id", :integer
+    t.column "user_id",    :string
   end
 
   create_table "profile", :force => true do |t|
@@ -38,6 +44,11 @@ ActiveRecord::Schema.define(:version => 15) do
     t.column "date_lastmail", :datetime
     t.column "frequency",     :integer
     t.column "user_id",       :string
+  end
+
+  create_table "tracked_article", :force => true do |t|
+    t.column "article_id", :integer
+    t.column "tracker_id", :integer
   end
 
   create_table "tracker", :force => true do |t|
