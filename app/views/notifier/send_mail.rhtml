@@ -1,12 +1,15 @@
-Bonjour <%= @username %>, voici des articles susceptibles de vous intéresser:
+<p>Bonjour <%= @username %>, <br/>
+Voici des articles susceptibles de vous int&eacute;resser.
+</p>
 
+<p><b>Suivi: </b><%= @tracker %></p>
+<p><b>Flux Rss: </b><%= link_to @rssfeed_title, @rssfeed_url %></p>
 <hr />
 
 <ul id="articles">
 	<% ArticleToSend.find(:all).each do |o| %>
 		<li>
 		    <h4><%= link_to Article.find_by_id(o.article_id).title, Article.find_by_id(o.article_id).url %></h4>	<!-- Affiche le titre et le lien vers l'article -->
-			<p><b>Suivi: </b><%= Tracker.find_by_id(o.tracker_id).title %></p>	<!-- Affiche le titre du suivi -->
 			<p><%= Article.find_by_id(o.article_id).publication_date %></p>	<!-- Affiche la date de publication de l'article -->
 			<p><%= Article.find_by_id(o.article_id).content %><br /></p>	<!-- Affiche la description de l'article -->
 			<hr />

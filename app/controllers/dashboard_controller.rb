@@ -84,7 +84,6 @@ class DashboardController < ApplicationController
   end
   
   def mail_sending
-    #j=0
     Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |s|
       if ((Time.now - s.date_lastmail)/(3600*24)) >= s.frequency
         TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", s.tracker_id ]).each do |d|
@@ -105,14 +104,15 @@ class DashboardController < ApplicationController
                                         :user_id => s.user_id)
             sa.save
           end
-          #j+=1
         end
         s.update_attribute :date_lastmail, s.date_lastmail+s.frequency.day
       end
-      Notifier.deliver_send_mail(Profile.find_by_user_id(s.user_id).email)
-      ArticleToSend.find(:all).each do |w|
-        w.destroy
-        w.save
+      unless ArticleToSend.find(:all).empty?
+        Notifier.deliver_send_mail(Profile.find_by_user_id(s.user_id).email)
+        ArticleToSend.find(:all).each do |w|
+          w.destroy
+          w.save
+        end
       end
     end
   end

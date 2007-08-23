@@ -11,11 +11,18 @@ class Notifier < ActionMailer::Base
   end
   
   def send_mail(email)
-    recipients email
-    from  "quentin.desert@uperto.com"
-    subject "[OVT] Nouveaux articles disponibles"
     
-    body :username => Profile.find_by_email(email).user_id
+    #Header
+    recipients email
+    sub="[OVT] Nouveaux articles disponibles - Suivi : "
+    subject sub+Tracker.find_by_id(ArticleToSend.find_by_user_id(Profile.find_by_email(email).user_id).tracker_id).title
+    content_type "text/html"
+    
+    #Body
+    body  :username => Profile.find_by_email(email).user_id,
+          :tracker => Tracker.find_by_id(ArticleToSend.find_by_user_id(Profile.find_by_email(email).user_id).tracker_id).title,
+          :rssfeed_title => Rssfeed.find_by_id(Tracker.find_by_id(ArticleToSend.find_by_user_id(Profile.find_by_email(email).user_id).tracker_id).rssfeed_id).title,
+          :rssfeed_url => Rssfeed.find_by_id(Tracker.find_by_id(ArticleToSend.find_by_user_id(Profile.find_by_email(email).user_id).tracker_id).rssfeed_id).url
   end
   
 end
