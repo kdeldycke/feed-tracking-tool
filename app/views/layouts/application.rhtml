@@ -6,7 +6,7 @@
 	<%= stylesheet_link_tag 'style' %>
 </head>
 <body>
-	
+
 	<ul id="navigation">
         <li><%= link_to 'Tableau de bord', :controller => 'dashboard', :action => 'display' %></li>
 		<li><%= link_to 'Historique', :controller => 'dashboard', :action => 'history' %></li>
@@ -16,11 +16,12 @@
         <li><%= link_to 'Suivis par utilisateur', :controller => 'recap', :action => 'users' %></li>
 		<li><%= link_to 'Utilisateurs par suivi', :controller => 'recap', :action => 'trackers' %></li>
     </ul>
-    
+
 	<div id="content">
 		<p align=right>
-			<%= session[:username] %>
-			<%= link_to 'D&eacute;connexion', :controller => 'login', :action => 'logout' %>
+    Logged in as: <%= session[:username] %>
+    | <%= link_to 'Preferences', :controller => 'profile' %>
+    | <%= link_to 'D&eacute;connexion', :controller => 'login', :action => 'logout' %>
 		</p>
 		<h1>Outil de Veille Technologique</h1>
 		<% unless flash[:notice].blank? %>
@@ -31,6 +32,6 @@
 		<% end %>
 		<%= yield %>
 	</div>
-	
+
 </body>
 </html>
