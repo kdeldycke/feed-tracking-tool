@@ -1,0 +1,7 @@
+mail_tick:
+  :class: build_and_send_mail_worker
+  :trigger_args: */7 * * * * * *
+
+feed_tick:
+  :class: fetch_feed_worker
+  :trigger_args: */5 * * * * * *
