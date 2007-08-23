@@ -95,8 +95,6 @@ class DashboardController < ApplicationController
             end
           end
           if ar == 0
-            #@article[j]=Article.find(article_id).title
-            
             tosend = ArticleToSend.new(:article_id => d.article_id, 
                                        :tracker_id => d.tracker_id,
                                        :user_id => s.user_id)
@@ -109,9 +107,9 @@ class DashboardController < ApplicationController
           end
           #j+=1
         end
-        s.update_attribute :date_lastmail, s.date_lastmail+s.frequency
+        s.update_attribute :date_lastmail, s.date_lastmail+s.frequency.day
       end
-      #Notifier.deliver_send_mail(Profile.find_by_user_id(session[:username]).email)
+      Notifier.deliver_send_mail(Profile.find_by_user_id(s.user_id).email)
       ArticleToSend.find(:all).each do |w|
         w.destroy
         w.save

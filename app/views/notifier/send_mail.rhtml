@@ -1,5 +1,7 @@
 Bonjour <%= @username %>, voici des articles susceptibles de vous intéresser:
 
+<hr />
+
 <ul id="articles">
 	<% ArticleToSend.find(:all).each do |o| %>
 		<li>

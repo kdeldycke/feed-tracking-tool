@@ -38,12 +38,20 @@
     <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |n| %>
       <!-- Pour chaque entrée de la table trackedarticle (table de liaison) dont le champ tracker_id correspond à l'utilisateur courant -->
 	  <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
-	  	<tr>
-	  		<td><%= Article.find_by_id(k.article_id).publication_date %></td>	<!-- Affiche la date de publication de l'article -->
-	    	<td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>	<!-- Affiche le titre et le lien vers l'article -->
-			<td><%= Article.find_by_id(k.article_id).content %></td>	<!-- Affiche la description de l'article -->
-	    	<td><%= Tracker.find_by_id(k.tracker_id).title %></td>	<!-- Affiche le titre du suivi -->
-	    </tr>
+	  	<% v=0 %>
+		<% SentArticleArchive.find(:all).each do |h| %>
+			<% if h.article_id == k.article_id and h.user_id = n.user_id %>
+				<% v=1 %>
+			<% end %>
+		<% end %>
+		<% if v==0 %>
+		  	<tr>
+		  		<td><%= Article.find_by_id(k.article_id).publication_date %></td>	<!-- Affiche la date de publication de l'article -->
+		    	<td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>	<!-- Affiche le titre et le lien vers l'article -->
+				<td><%= Article.find_by_id(k.article_id).content %></td>	<!-- Affiche la description de l'article -->
+		    	<td><%= Tracker.find_by_id(k.tracker_id).title %></td>	<!-- Affiche le titre du suivi -->
+		    </tr>
+		<% end %>
       <% end %>
 	<% end %>
 

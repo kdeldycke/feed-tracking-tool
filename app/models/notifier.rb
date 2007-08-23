@@ -15,7 +15,7 @@ class Notifier < ActionMailer::Base
     from  "quentin.desert@uperto.com"
     subject "[OVT] Nouveaux articles disponibles"
     
-    body :username => session[:username]
+    body :username => Profile.find_by_email(email).user_id
   end
   
 end
