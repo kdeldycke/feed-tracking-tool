@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   ####session :session_key => '_OVT_session_id'
   before_filter :authenticate
   filter_parameter_logging "password"
-  
+
   protected
   def authenticate
     unless session[:username]
@@ -15,5 +15,5 @@ class ApplicationController < ActionController::Base
       return false
     end
   end
-  
+
 end
