@@ -8,13 +8,13 @@
 	  <th>Titre du suivi</th>
 	  <th>Flux RSS</th>
 	  <th>Fr&eacute;quence (j)</th>
-	
-	<!-- Pour chaque entrée de la table subscription dont le champ user_id correspond à l'utilisateur courant -->
-	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |s| -%>
+
+	<!-- Pour chaque entrï¿½e de la table subscription dont le champ user_id correspond ï¿½ l'utilisateur courant -->
+	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |s| -%>
 	    <tr>
 	    	<td><%= Tracker.find_by_id(s.tracker_id).title %></td>		<!-- Affiche le titre du suivi -->
-			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title %></td>	<!-- Affiche le titre du flux RSS associé -->
-			<td align="center"><%= s.frequency %></td>		<!-- Affiche la fréquence de réception -->
+			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title %></td>	<!-- Affiche le titre du flux RSS associï¿½ -->
+			<td align="center"><%= s.frequency %></td>		<!-- Affiche la frï¿½quence de rï¿½ception -->
 	    </tr>
 	<% end -%>
 
@@ -22,7 +22,7 @@
 
 
 <p><h4>Articles retenus en attente d'envoi</h4></p>
-	
+
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
 
 	<tr>
@@ -30,11 +30,11 @@
 	  <th>Article</th>
 	  <th>Description</th>
 	  <th>Suivi</th>
-	</tr>  
-	
-	<!-- Pour chaque entrée de la table subscription dont le champ user_id correspond à l'utilisateur courant -->
-    <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |n| %>
-      <!-- Pour chaque entrée de la table trackedarticle (table de liaison) dont le champ tracker_id correspond à l'utilisateur courant -->
+	</tr>
+
+	<!-- Pour chaque entrï¿½e de la table subscription dont le champ user_id correspond ï¿½ l'utilisateur courant -->
+    <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |n| %>
+      <!-- Pour chaque entrï¿½e de la table trackedarticle (table de liaison) dont le champ tracker_id correspond ï¿½ l'utilisateur courant -->
 	  <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
 	  	<% v=0 %>
 		<% SentArticleArchive.find(:all).each do |h| %>

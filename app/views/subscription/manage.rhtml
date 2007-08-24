@@ -1,14 +1,14 @@
 <h2>Gestion des abonnements aux suivis</h2><br>
 
 
-<% form_for :subscription do |f| %>		<!-- Formulaire de remplissage de l'entrée créée dans la table subscription -->
+<% form_for :subscription do |f| %>		<!-- Formulaire de remplissage de l'entrï¿½e crï¿½ï¿½e dans la table subscription -->
 <p>
   Suivi:
-  <%= collection_select(:tracker, :id, @trackers, :id, :title) %>	<!-- Liste déroulante contenant les suivis existant -->
+  <%= collection_select(:tracker, :id, @trackers, :id, :title) %>	<!-- Liste dï¿½roulante contenant les suivis existant -->
 </p>
 <p>
   Fr&eacute;quence de r&eacute;ception (en jours):
-  <%= f.text_field :frequency %>					<!-- Saisie de la fréquence de réception du suivi -->
+  <%= f.text_field :frequency %>					<!-- Saisie de la frï¿½quence de rï¿½ception du suivi -->
 </p>
   <%= submit_tag 'Ajouter'%>
 </p>
@@ -24,13 +24,13 @@
 	  <th>XML</th>
 	  <th>Fr&eacute;quence (j)</th>
 	  <th>Annuler</th>
-	
-	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:username] ]).each do |j| -%>	<!-- Pour chaque entrée de la table subscription dont le champ user_id correspond à l'utilisateur courant -->
+
+	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |j| -%>	<!-- Pour chaque entrï¿½e de la table subscription dont le champ user_id correspond ï¿½ l'utilisateur courant -->
 	    <tr>
 	    	<td><%= Tracker.find_by_id(j.tracker_id).title %></td>		<!-- Affiche le titre du suivi en cours -->
-			<td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>	<!-- Affiche le titre du flux RSS associé -->
+			<td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>	<!-- Affiche le titre du flux RSS associï¿½ -->
 			<td align="center"><%= link_to_image 'rss.gif', Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).url %></td>
-			<td align="center"><%= j.frequency %></td>				<!-- Affiche la fréquence de réception -->
+			<td align="center"><%= j.frequency %></td>				<!-- Affiche la frï¿½quence de rï¿½ception -->
 			<td align="center"><%= link_to 'Annuler', url_for(:action => 'destroy', :id => j.id) %></td>	<!-- Annuler l'abonnement (lien sur l'action destroy) -->
 	    </tr>
 	<% end -%>

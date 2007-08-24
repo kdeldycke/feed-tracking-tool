@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   protected
   def authenticate
-    unless session[:username]
+    unless session[:user]
       session[:return_to] = @request.request_uri
       redirect_to :controller => "login"
       return false

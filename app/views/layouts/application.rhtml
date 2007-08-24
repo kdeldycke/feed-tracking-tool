@@ -7,7 +7,7 @@
 </head>
 <body>
 
-  <% unless session[:username].blank? %>
+  <% unless session[:user].blank? %>
     <ul id="navigation">
       <li><%= link_to 'Tableau de bord', :controller => 'dashboard', :action => 'display' %></li>
       <li><%= link_to 'Historique', :controller => 'dashboard', :action => 'history' %></li>
@@ -23,14 +23,13 @@
 
     <h1>Outil de Veille Technologique</h1>
 
-    <% unless session[:username].blank? %>
+    <% unless session[:user].blank? %>
         <p align=right>
-      Logged in as: <%= session[:username] %>
+      Logged in as: <%= session[:user][:display_name] %>
       | <%= link_to 'Preferences', :controller => 'profile' %>
       | <%= link_to 'D&eacute;connexion', :controller => 'login', :action => 'logout' %>
           </p>
     <% end %>
-
 
     <% unless flash[:notice].blank? %>
       <div id="notification"><%= flash[:notice] %></div>

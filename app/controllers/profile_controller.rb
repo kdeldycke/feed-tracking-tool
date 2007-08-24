@@ -3,7 +3,7 @@ class ProfileController < ApplicationController
 
   def index
     # Get the currrent user profile or create a new one if doesn't exist
-    user_id = session[:username]
+    user_id = session[:user][:id]
     profile = Profile.find_by_user_id(user_id)
     if not profile:
       profile = Profile.new
