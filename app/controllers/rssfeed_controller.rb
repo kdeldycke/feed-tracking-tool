@@ -12,7 +12,8 @@ class RssfeedController < ApplicationController
     end
   end
   
-  #Methode pour lire des flux RSS
+  # Methode pour lire des flux RSS
+  # Ne lit que les Flux de type XML
   def rss(url)
     open(url, :proxy => "http://12.34.56.78:8080") do |http|  # Ouverture de l'url en passant par le proxy
       response = http.read                                    # Lecture de l'url
@@ -23,16 +24,18 @@ class RssfeedController < ApplicationController
     end  
   end
   
-  #def update
-  #  @rss = Rssfeed.find(:all).each do |u|
-  #    rss(u.url)                   # Appel de la méthode de parsing de flux RSS avec l'url saisie
-  #    u.update_attribute :title , @title               # Ajout dans la table rssfeed du champ titre
-  #    u.update_attribute :description, @description    # Ajout dans la table rssfeed du champ description
-  #    u.update_attribute :link, @link                  # Ajout dans la table rssfeed du champ link
-  #    flash[:notice] = 'Mis a jour'
-  #    redirect_to(:action => 'manage') # actualisation de la page
-  #  end
-  #end
+  
+  # Methode alternative utilisant le parser FeedTools (non utilisée car problème de réglage du proxy)
+  # FeedTools est censé lire des flux RSS et ATOM
+  def rss2(url)
+    FeedTools.configurations[:proxy_address] = 'http://12.34.56.78'
+    FeedTools.configurations[:proxy_port] = 8080
+    feed = FeedTools::Feed.open(url)
+
+    @title = "#{feed.title}"                      # Récupération du champ title
+    @description = "#{feed.description}"          # Récupération du champ description
+    @link = "#{feed.link}"                        # Récupération du champ link  
+  end
   
   def destroy
     r=Rssfeed.find(params[:id])   # recherche dans la base de données rssfeed du flux à supprimer

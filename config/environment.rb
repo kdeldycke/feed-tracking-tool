@@ -67,7 +67,6 @@ ActionMailer::Base.delivery_method = :msmtp
 module ActionMailer
   class Base
     def perform_delivery_msmtp(mail)
-      #IO.popen("/usr/bin/msmtp -t -C /home/qdesert/.msmtprc -a gmail --", "w") do |sm|
       # TODO: generate absolute path below dynamiccaly
       IO.popen("/usr/bin/msmtp -t -C /home/qdesert/.msmtprc -a provider --", "w") do |sm|
         sm.puts(mail.encoded.gsub(/\r/, ''))
@@ -81,18 +80,9 @@ module ActionMailer
   end
 end
 
-
-#ActionMailer::Base.smtp_settings = {
-#:address => "smtp.uperto.com",
-#:port => "25",
-#:authentication => :plain,
-#:user_name => "qdesert",
-#:password => "*******"
-#}
-
 #require 'activeldap'
 
 require 'rss/2.0'
 require 'open-uri'
 
-#require 'smtp_tls'
+#require 'feed_tools'

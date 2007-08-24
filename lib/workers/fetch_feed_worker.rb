@@ -8,7 +8,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     # This method is called in it's own new thread when you
     # call new worker. args is set to :args
 
-    # TODO: Write here code that download feed, parse them and cache them in local database.
+    # TODO: Remove from the article database articles older than 31 days
 
     logger.info "Fetch the feeds !"
     
