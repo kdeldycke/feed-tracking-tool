@@ -29,22 +29,25 @@ class BuildAndSendMailWorker < BackgrounDRb::Worker::RailsBase
                                        :tracker_id => d.tracker_id,
                                        :user_id => s.user_id)
             tosend.save
-            
-            sa = SentArticleArchive.new(:article_id => d.article_id, 
-                                        :sending_date => Time.now, 
-                                        :user_id => s.user_id)
-            sa.save
           end
         end
-        s.update_attribute :date_lastmail, s.date_lastmail+s.frequency.day
       end
-      unless ArticleToSend.find(:all).empty?
-        Notifier.deliver_send_mail(Profile.find_by_user_id(s.user_id).email)
-        ArticleToSend.find(:all).each do |w|
-          w.destroy
-          w.save
+      unless ArticleToSend.find(:all, :conditions => [ "user_id = ?", s.user_id ]).empty?  
+        Profile.find(:all).each do |p|
+          if p.user_id == s.user_id
+            Notifier.deliver_send_mail(p.email)
+            ArticleToSend.find(:all, :conditions => [ "user_id = ?", s.user_id ]).each do |w|
+              w.destroy
+              w.save
+              sa = SentArticleArchive.new(:article_id => w.article_id, 
+                                          :sending_date => Time.now, 
+                                          :user_id => w.user_id)
+              sa.save
+            end
+          end
         end
       end
+      s.update_attribute :date_lastmail, s.date_lastmail+s.frequency.day
     end
     
     ######
