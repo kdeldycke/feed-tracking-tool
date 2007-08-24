@@ -4,12 +4,26 @@ require 'net/ldap'
 
 module LDAP
 
+  def self.generateDNFromLogin(login)
+    # This method generate a DN (= primary key for LDAP) from a login.
+    # XXX This method will evolve in the future to handle multiple container much smarter.
+    if login.length == 0
+      return false
+    end
+    return "uid=#{login},ou=users,dc=uperto"
+  end
+
   def self.authenticate(login, password)
+    # This method is a simple wrapper to authenticate() that take a login as first parameter instead of a DN
+    return self.authenticateByDN(self.generateDNFromLogin(login), password)
+  end
+
+  def self.authenticateByDN(dn, password)
     # Init default returned hash
     result = {:authenticated => false, :message => nil}
 
     # Check login and password
-    if login.length == 0
+    if dn.length == 0
       result[:message] = "No login"
       return result
     elsif password.length == 0
@@ -22,8 +36,8 @@ module LDAP
                                 :port => 389,
                                 :base => "dc=uperto",
                                 :auth => {:method   => :simple,
-                                          :username => "uid=#{login},ou=users,dc=uperto",
-                                          :password => password
+                                          :username => dn,
+                                          :password => password,
                               }})
 
     # Connect to server
