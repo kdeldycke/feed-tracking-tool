@@ -7,7 +7,7 @@ class RssfeedController < ApplicationController
       @rssfeed.update_attribute :title , @title               # Ajout dans la table rssfeed du champ titre
       @rssfeed.update_attribute :description, @description    # Ajout dans la table rssfeed du champ description
       @rssfeed.update_attribute :link, @link                  # Ajout dans la table rssfeed du champ link
-      flash[:notice] = 'Flux RSS ajout&eacute; avec succ&egrave;s'
+      flash[:notice] = "Flux RSS ajout&eacute; avec succ&egrave;s. Ce flux sera traité dans l'heure"
       redirect_to :controller => 'rssfeed', :action => 'manage' # actualisation de la page
     end
   end

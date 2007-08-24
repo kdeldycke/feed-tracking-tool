@@ -9,7 +9,7 @@ class TrackerController < ApplicationController
       #if 
       @selected_feed = params[:rssfeed][:id]                      # récupération du flux sélectionné
       @tracker.update_attribute :rssfeed_id, @selected_feed          # MAJ du champ feed_id dans la table rssfeed
-      flash[:notice] = 'Suivi ajout&eacute; avec succ&egrave;s'
+      flash[:notice] = "Suivi ajout&eacute; avec succ&egrave;s. Vous pouvez vous abonner a ce suivi dans l'onglet Gestion des abonnements aux suivis"
       redirect_to :controller => 'tracker', :action => 'edit'     # actualisation de la page
     end
   end
