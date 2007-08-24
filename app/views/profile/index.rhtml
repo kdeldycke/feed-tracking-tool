@@ -4,9 +4,10 @@
 
 <% form_for :profile do |f| %>
 <p>
-  eMail:
+  email:
   <%= f.text_field :email %>
 </p>
+<p>To stop email sending, empty the email field.</p>
 <p>
   <%= submit_tag 'Update'%>
 </p>
