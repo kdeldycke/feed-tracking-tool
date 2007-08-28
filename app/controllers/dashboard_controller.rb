@@ -6,10 +6,11 @@ class DashboardController < ApplicationController
   def history
   end
 
-
+  # Call to fetch_feed_worker method for easier testing (doesn't work for now)
   def update_call
     ffw = FetchFeedWorker.new
     ffw.do_work
+    redirect_to :controller => 'dashboard', :action => 'display'
   end
 
 
