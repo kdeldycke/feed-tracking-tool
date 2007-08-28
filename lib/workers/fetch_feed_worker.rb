@@ -16,7 +16,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     
     # Pour chaque entrée de la table rssfeed
     Rssfeed.find(:all).each do |r|
-      rss_articles(r.url)   # Récupération de tous les articles contenus dans le flux RSS
+      rss_articles2(r.url)   # Récupération de tous les articles contenus dans le flux RSS
       i=0
       while i < @size       # Parcours de tous les items lus dans le flux RSS
         t=0
@@ -87,6 +87,29 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
         (@description[i] = "#{item.description}")
       end
     end  
+  end
+  
+  def rss_articles2(url)
+    @pubDate = []
+    @title = []
+    @link = []
+    @description = []
+    @i=0;
+    
+    feed = SimpleRSS.parse open(url, :proxy => "http://12.34.56.78:8080")
+
+    #@title = "#{feed.channel.title}"                      # Récupération du champ title
+    #@description = "#{feed.channel.description}"          # Récupération du champ description
+    #@link = "#{feed.channel.link}"                        # Récupération du champ link 
+    
+    @size = feed.items.size                               # Nombre d'items lus dans le flux RSS
+    feed.items.each_with_index do |item, i|
+      (@pubDate[i] = "#{item.pubDate}") and 
+      (@title[i] = "#{item.title}") and 
+      (@link[i] = "#{item.link}") and 
+      (@description[i] = "#{item.description}")
+    end
+    
   end
   
   ######

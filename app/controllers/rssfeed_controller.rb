@@ -28,8 +28,15 @@ class RssfeedController < ApplicationController
   # Methode alternative utilisant le parser FeedTools (non utilisée car problème de réglage du proxy)
   # FeedTools est censé lire des flux RSS et ATOM
   def rss2(url)
-    FeedTools.configurations[:proxy_address] = 'http://12.34.56.78'
-    FeedTools.configurations[:proxy_port] = 8080
+    #FeedTools.load_configurations
+    #@configurations = { :proxy_address => 'http://12.34.56.78',
+    #                    :proxy_port => 8080 }
+    
+    #FeedTools.configurations[:proxy_address] = 'http://12.34.56.78'
+    #FeedTools.configurations[:proxy_port] = 8080
+    
+    #feed = FeedTools::Feed.open(url, { :proxy_address => "http://12.34.56.78", :proxy_port => 8080 })
+    
     feed = FeedTools::Feed.open(url)
 
     @title = "#{feed.title}"                      # Récupération du champ title
@@ -37,6 +44,16 @@ class RssfeedController < ApplicationController
     @link = "#{feed.link}"                        # Récupération du champ link  
   end
   
+  #Méthode utilisant Simple-rss
+  def rss3(url)
+    feed = SimpleRSS.parse open(url, :proxy => "http://12.34.56.78:8080")
+
+    @title = "#{feed.channel.title}"                      # Récupération du champ title
+    @description = "#{feed.channel.description}"          # Récupération du champ description
+    @link = "#{feed.channel.link}"                        # Récupération du champ link  
+  end
+  
+  #Suppression d'un flux de la base
   def destroy
     r=Rssfeed.find(params[:id])   # recherche dans la base de données rssfeed du flux à supprimer
     

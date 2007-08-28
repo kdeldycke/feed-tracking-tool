@@ -85,4 +85,8 @@ end
 require 'rss/2.0'
 require 'open-uri'
 
-#require 'feed_tools'
+require 'feed_tools'
+require 'simple-rss'
+
+FeedTools.configurations[:proxy_address] = "http://12.34.56.78"
+FeedTools.configurations[:proxy_port] = 8080
