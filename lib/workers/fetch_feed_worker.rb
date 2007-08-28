@@ -11,25 +11,25 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     # TODO: Remove from the article database articles older than 31 days
 
     logger.info "Fetch the feeds !"
-    
+
     ###### Recherche des articles dans les flux RSS et mise en base + Filtrage
-    
-    # Pour chaque entrée de la table rssfeed
+
+    # Pour chaque entrï¿½e de la table rssfeed
     Rssfeed.find(:all).each do |r|
-      rss_articles2(r.url)   # Récupération de tous les articles contenus dans le flux RSS
+      rss_articles2(r.url)   # Rï¿½cupï¿½ration de tous les articles contenus dans le flux RSS
       i=0
       while i < @size       # Parcours de tous les items lus dans le flux RSS
         t=0
-        Article.find(:all).each do |a|    # Pour chaque entrée de la table article
-          if a.title == @title[i]         # Si le titre est le même, l'article existe déjà
+        Article.find(:all).each do |a|    # Pour chaque entrï¿½e de la table article
+          if a.title == @title[i]         # Si le titre est le mï¿½me, l'article existe dï¿½jï¿½
             t=1
           end
         end
         if t == 0     # L'article n'existe pas dans la table article
-          # Création d'une nouvelle entrée dans la table article
-          art=Article.new(:title => @title[i], 
-                          :url => @link[i], 
-                          :publication_date => @pubDate[i], 
+          # Crï¿½ation d'une nouvelle entrï¿½e dans la table article
+          art=Article.new(:title => @title[i],
+                          :url => @link[i],
+                          :publication_date => @pubDate[i],
                           :content => @description[i],
                           :rssfeed_id => r.id)
           art.save  # Sauvegarde
@@ -37,39 +37,39 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
         i+=1
       end
     end
-    
-    # Filtrage des articles selon les expressions régulières des suivis et remplissage de la table de liaison trackedarticles
-    # Pour chaque entrée de la table tracker
+
+    # Filtrage des articles selon les expressions rï¿½guliï¿½res des suivis et remplissage de la table de liaison trackedarticles
+    # Pour chaque entrï¿½e de la table tracker
     Tracker.find(:all).each do |t|
-      # Et pour chaque entrée de la table article
+      # Et pour chaque entrï¿½e de la table article
       Article.find(:all, :conditions => [ "rssfeed_id = ?", t.rssfeed_id ]).each do |e|
-        # On vérifie la présence de l'expression régulière dans le titre et dans la description de l'article
+        # On vï¿½rifie la prï¿½sence de l'expression rï¿½guliï¿½re dans le titre et dans la description de l'article
         if e.title.include? t.regex or e.content.include? t.regex
           u=0
-          TrackedArticle.find(:all).each do |c|    # Pour chaque entrée de la table trackedarticle
-            if c.tracker_id == t.id and c.article_id == e.id         # Si l'id est le même, l'article existe déjà
+          TrackedArticle.find(:all).each do |c|    # Pour chaque entrï¿½e de la table trackedarticle
+            if c.tracker_id == t.id and c.article_id == e.id         # Si l'id est le mï¿½me, l'article existe dï¿½jï¿½
               u=1
             end
           end
           if u == 0     # L'article n'existe pas dans la table trackedarticle
-            # Création d'une nouvelle entrée dans la table de liaison
-            tr=TrackedArticle.new(:article_id => e.id, 
+            # Crï¿½ation d'une nouvelle entrï¿½e dans la table de liaison
+            tr=TrackedArticle.new(:article_id => e.id,
                                   :tracker_id => t.id)
             tr.save   # Sauvegarde
           end
         end
       end
     end
-    
+
     ######
-    
+
 
     # Commit suicide
     self.delete
   end
-  
-  ####### Methode pour de récupération et parsing des articles dans les flux RSS
-  
+
+  ####### Methode pour de rï¿½cupï¿½ration et parsing des articles dans les flux RSS
+
   def rss_articles(url)
     @pubDate = []
     @title = []
@@ -80,38 +80,38 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
       response = http.read                                    # Lecture de l'url
       result = RSS::Parser.parse(response, false)             # Parsing du flux RSS
       @size = result.items.size                               # Nombre d'items lus dans le flux RSS
-      result.items.each_with_index do |item, i|               # Récupération des champs de chaque article
-        (@pubDate[i] = "#{item.pubDate}") and 
-        (@title[i] = "#{item.title}") and 
-        (@link[i] = "#{item.link}") and 
+      result.items.each_with_index do |item, i|               # Rï¿½cupï¿½ration des champs de chaque article
+        (@pubDate[i] = "#{item.pubDate}") and
+        (@title[i] = "#{item.title}") and
+        (@link[i] = "#{item.link}") and
         (@description[i] = "#{item.description}")
       end
-    end  
+    end
   end
-  
+
   def rss_articles2(url)
     @pubDate = []
     @title = []
     @link = []
     @description = []
     @i=0;
-    
+
     feed = SimpleRSS.parse open(url, :proxy => "http://12.34.56.78:8080")
 
-    #@title = "#{feed.channel.title}"                      # Récupération du champ title
-    #@description = "#{feed.channel.description}"          # Récupération du champ description
-    #@link = "#{feed.channel.link}"                        # Récupération du champ link 
-    
+    #@title = "#{feed.channel.title}"                      # Rï¿½cupï¿½ration du champ title
+    #@description = "#{feed.channel.description}"          # Rï¿½cupï¿½ration du champ description
+    #@link = "#{feed.channel.link}"                        # Rï¿½cupï¿½ration du champ link
+
     @size = feed.items.size                               # Nombre d'items lus dans le flux RSS
     feed.items.each_with_index do |item, i|
-      (@pubDate[i] = "#{item.pubDate}") and 
-      (@title[i] = "#{item.title}") and 
-      (@link[i] = "#{item.link}") and 
+      (@pubDate[i] = "#{item.pubDate}") and
+      (@title[i] = "#{item.title}") and
+      (@link[i] = "#{item.link}") and
       (@description[i] = "#{item.description}")
     end
-    
+
   end
-  
+
   ######
 
 end
