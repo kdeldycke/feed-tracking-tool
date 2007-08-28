@@ -3,11 +3,15 @@
 <%= error_messages_for 'profile' %>
 
 <% form_for :profile do |f| %>
-<p>
-  email:
-  <%= f.text_field :email %>
+<p>Display name:
+   <%= f.text_field :display_name %>
 </p>
-<p>To stop email sending, empty the email field.</p>
+<p>e-mail:
+   <%= f.text_field :email %>
+</p>
+<p>Suspend regular mail sending (to stop mail flood during holidays ! <code>;-)</code> ):
+  <%= f.check_box :suspend_email %>
+</p>
 <p>
   <%= submit_tag 'Update'%>
 </p>

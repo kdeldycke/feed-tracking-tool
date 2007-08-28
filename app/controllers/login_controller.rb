@@ -32,6 +32,14 @@ class LoginController < ApplicationController
       if profile.email.blank?
         profile.update_attribute :email, user_details[:mail]
       end
+      if profile.suspend_email.blank?
+        # Activate email sending by default. If the user receive mails he don't want, a message in each email footer remind him how to disable automatic mail sending.
+        profile.update_attribute :suspend_email, false
+      end
+      if profile.display_name.blank?
+        # TODO: do not get display_name or email adress from the LDAP if not empty
+        profile.update_attribute :display_name, user_details[:displayname]
+      end
       # Redirect to the right place
       if session[:return_to]
         redirect_to_path(session[:return_to])

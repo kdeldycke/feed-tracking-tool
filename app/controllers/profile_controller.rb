@@ -12,8 +12,10 @@ class ProfileController < ApplicationController
 
     # Was the form submitted ?
     if request.post?
-      # Save user new email in new profile
+      # Save user new preferences in new profile
       profile.email = params[:profile][:email]
+      profile.suspend_email = params[:profile][:suspend_email]
+      profile.display_name = params[:profile][:display_name]
       # Try to save the new profile in the database
       if profile.save
         flash[:notice] = 'Preferences updated'
