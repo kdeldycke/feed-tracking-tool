@@ -25,6 +25,7 @@
 
     <% unless session[:user].blank? %>
         <p align=right>
+      <!-- TODO: get display name from preferences -->
       Logged in as: <%= session[:user][:display_name] %>
       | <%= link_to 'Preferences', :controller => 'profile' %>
       | <%= link_to 'D&eacute;connexion', :controller => 'login', :action => 'logout' %>
