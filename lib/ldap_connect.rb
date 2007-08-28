@@ -54,11 +54,10 @@ module LDAP
     ldap_con = self.getLDAPConnection(dn, password)
     begin
       ldap_con.bind
-    rescue => e
-      result[:msg] = e.message
+    rescue Exception => e
+      result[:msg] = e.class.to_s + " - " + e.message.to_s
       return result
     end
-
     con_result = ldap_con.get_operation_result
     if con_result.code != 0
       result[:message] = "LDAP error ##{con_result.code}: #{con_result.message}"
