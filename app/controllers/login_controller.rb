@@ -1,15 +1,38 @@
 require 'ldap_connect'
+
+
 class LoginController < ApplicationController
-  skip_before_filter :authenticate  # Permet l'acc�s � cette page sans �tre authentifi�
+  skip_before_filter :authenticate  # This page is public
+
+  def index
+    # Redirect to dashboard if user logged in
+    if session[:user]
+      redirect_to :controller => 'dashboard', :action => "display"
+    end
+  end
 
   def authenticate
     # Inspired by http://www.rich-waters.com/blog/2007/02/using-domino-logins-ldap-for-a-ruby-on-rails-app.html
-    auth_result = LDAP.authenticate(params[:login][:name], params[:login][:password])
+    login = params[:login][:name]
+    pwd   = params[:login][:password]
+    dn    = LDAP.generateDNFromLogin(login)
+    auth_result = LDAP.authenticateByDN(dn, pwd)
     if auth_result[:authenticated]
-      session[:user] = {:login        => params[:login][:name],
-                        :id           => LDAP.generateDNFromLogin(params[:login][:name]),
-                        :display_name => params[:login][:name], # TODO: get display_name from LDAP
+      user_details = LDAP.getAttributeList(login, pwd)
+      session[:user] = {:login        => login,
+                        :id           => dn,
+                        :display_name => user_details[:displayname],
                        }
+      # Create new profile and update default mail if necessary
+      profile = Profile.find_by_user_id(dn)
+      if not profile:
+        profile = Profile.new
+        profile.update_attribute :user_id, dn
+      end
+      if profile.email.blank?
+        profile.update_attribute :email, user_details[:mail]
+      end
+      # Redirect to the right place
       if session[:return_to]
         redirect_to_path(session[:return_to])
         session[:return_to] = nil
@@ -22,9 +45,9 @@ class LoginController < ApplicationController
     end
   end
 
-  # Logout
-  # r�initialise la session
+
   def logout
+    # Reset session
     session[:user] = nil
     flash[:notice] = "Deconnecte"
     redirect_to :action => "index"
