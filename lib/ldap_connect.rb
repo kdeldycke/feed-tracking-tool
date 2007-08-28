@@ -1,8 +1,25 @@
-# Inspired by http://www.rich-waters.com/blog/2007/02/using-domino-logins-ldap-for-a-ruby-on-rails-app.html
-
 require 'net/ldap'
 
+
 module LDAP
+
+  # LDAP config
+  HOST = "12.34.56.78"
+  PORT = 389
+  BASE = "ou=users,dc=uperto"
+
+
+  def self.getLDAPConnection(dn, password)
+    # Simple method to create a LDAP connection based on global config defined via constants above
+    return Net::LDAP.new({:host => HOST,
+                          :port => PORT,
+                          :base => BASE,
+                          :auth => {:method   => :simple,
+                                    :username => dn,
+                                    :password => password,
+                          }})
+  end
+
 
   def self.generateDNFromLogin(login)
     # This method generate a DN (= primary key for LDAP) from a login.
@@ -10,13 +27,15 @@ module LDAP
     if login.length == 0
       return false
     end
-    return "uid=#{login},ou=users,dc=uperto"
+    return "uid=#{login},#{BASE}" # XXX Ugly: hard coded. Should be at least defined in a constant
   end
+
 
   def self.authenticate(login, password)
     # This method is a simple wrapper to authenticate() that take a login as first parameter instead of a DN
     return self.authenticateByDN(self.generateDNFromLogin(login), password)
   end
+
 
   def self.authenticateByDN(dn, password)
     # Init default returned hash
@@ -31,16 +50,8 @@ module LDAP
       return result
     end
 
-    # Setup the LDAP connection
-      ldap_con = Net::LDAP.new({:host => '12.34.56.78',
-                                :port => 389,
-                                :base => "dc=uperto",
-                                :auth => {:method   => :simple,
-                                          :username => dn,
-                                          :password => password,
-                              }})
-
     # Connect to server
+    ldap_con = self.getLDAPConnection(dn, password)
     begin
       ldap_con.bind
     rescue => e
@@ -58,6 +69,31 @@ module LDAP
     result[:authenticated] = true
     result[:message] = con_result.message
     return result
+  end
+
+
+  def self.getAttributeList(uid, password)
+    # Get all user's attributes
+    # XXX This method is not bullet-proof. See comments for details...
+    dn = self.generateDNFromLogin(uid)
+    ldap_con = self.getLDAPConnection(dn, password)
+    filter = Net::LDAP::Filter.eq("uid", uid) # XXX Why can't we search by DN ? I used uid instead but it's not supposed to be a primary key... :(
+    results = Array.new()
+    ldap_con.search(:base => BASE, :filter => filter) do |entry|
+      attr_list = Hash.new()
+      entry.each do |k, v|
+        if v.class.to_s == "Array" and v.length == 1
+          v = String.new(v.first)
+        end
+        attr_list[k] = v
+      end
+      results.push(attr_list)
+    end
+    # XXX ugly: other results (if any) are ignored. That why using DN as search criterion is the right thing to do (see above).
+    if results.length > 0
+      return results.first
+    end
+    return false
   end
 
 end
