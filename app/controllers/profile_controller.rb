@@ -1,6 +1,6 @@
 class ProfileController < ApplicationController
 
-  def index
+  def edit
     # Get the currrent user profile or create a new one if doesn't exist
     user_id = session[:user][:id]
     profile = Profile.find_by_user_id(user_id)
@@ -24,7 +24,7 @@ class ProfileController < ApplicationController
         flash[:warning] = 'Invalid email address !'
       end
       # Redirect to controller default action
-      redirect_to :controller => 'profile'
+      redirect_to :controller => 'profile', :action => 'edit'
 
     # "View" mode, use current profile as instance variable
     else
