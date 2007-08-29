@@ -13,8 +13,8 @@
     <ul id="navigation">
       <li><%= link_to 'Gestion des flux RSS', :controller => 'rssfeed', :action => 'manage' %></li>
       <li><%= link_to 'Edition des suivis', :controller => 'tracker', :action => 'edit' %></li>
-      <li><%= link_to 'Suivis par utilisateur', :controller => 'recap', :action => 'users' %></li>
-      <li><%= link_to 'Utilisateurs par suivi', :controller => 'recap', :action => 'trackers' %></li>
+      <li><%= link_to 'Suivis par utilisateur', :controller => 'profile', :action => 'users' %></li>
+      <li><%= link_to 'Utilisateurs par suivi', :controller => 'subscription', :action => 'trackers' %></li>
     </ul>
   <% end %>
 
