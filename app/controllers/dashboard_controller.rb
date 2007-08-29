@@ -50,6 +50,8 @@ class DashboardController < ApplicationController
     redirect_to :controller => 'dashboard', :action => 'display'
   end
   
+  ######
+  
   def find_tracked_articles
     # Filtering of articles by trackers regular expressions and update of relationship table trackedarticles
     # For each entry of the tracker table
@@ -95,50 +97,22 @@ class DashboardController < ApplicationController
     end
   end
 
-  ####### Method for retrieving articles from RSS feeds
-
-  # This method uses the Ruby RSS Parser (can only deal with XML feeds)
+  # Method for retrieving articles from an RSS feed using the Feedtools parser
   def rss_articles(url)
     @pubDate = []
     @title = []
     @link = []
     @description = []
     @i=0;
-    open(url, :proxy => "http://12.34.56.78:8080") do |http|  # Opening url through the proxy
-      response = http.read                                    # Reading of url
-      result = RSS::Parser.parse(response, false)             # Parsing of RSS feed
-      @size = result.items.size                               # Number of items read in the RSS feed
-      result.items.each_with_index do |item, i|               # Retrieving of the RSS feed fields
-        (@pubDate[i] = "#{item.pubDate}") and
-        (@title[i] = "#{item.title}") and
-        (@link[i] = "#{item.link}") and
-        (@description[i] = "#{item.description}")
-      end
+    
+    feed = FeedTools::Feed.open(url)          # Opening url
+    @size = feed.items.size                   # Number of items read in the RSS feed
+    feed.items.each_with_index do |item, i|   # Retrieving of the RSS feed fields
+      (@pubDate[i] = item.time) and
+      (@title[i] = item.title) and
+      (@link[i] = item.link) and
+      (@description[i] = item.description)
     end
   end
-
-  # This method uses the Simple-rss Parser (can deal with more formats)
-  def rss_articles2(url)
-    @pubDate = []
-    @title = []
-    @link = []
-    @description = []
-    @i=0;
-
-    feed = SimpleRSS.parse open(url, :proxy => "http://12.34.56.78:8080")
-
-    @size = feed.items.size                               # Number of items read in the RSS feed
-    feed.items.each_with_index do |item, i|
-      (@pubDate[i] = "#{item.pubDate}") and
-      (@title[i] = "#{item.title}") and
-      (@link[i] = "#{item.link}") and
-      (@description[i] = "#{item.description}")
-    end
-
-  end
-
-  ######
-
-
 
 end
