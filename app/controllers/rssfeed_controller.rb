@@ -1,9 +1,9 @@
 class RssfeedController < ApplicationController
 
   def manage
-    @rssfeed = Rssfeed.new(params[:rssfeed])  # Création d'une entrée dans la table rssfeed
-    if request.post? and @rssfeed.save        # si le formulaire a été rempli et validï¿½
-      rss(@rssfeed.url)                   # Appel de la méthode de parsing de flux RSS avec l'url saisie
+    @rssfeed = Rssfeed.new(params[:rssfeed])  # CrÃ©ation d'une entrÃ©e dans la table rssfeed
+    if request.post? and @rssfeed.save        # si le formulaire a Ã©tÃ© rempli et validÃ©
+      rss(@rssfeed.url)                   # Appel de la mÃ©thode de parsing de flux RSS avec l'url saisie
       @rssfeed.update_attribute :title , @title               # Ajout dans la table rssfeed du champ titre
       @rssfeed.update_attribute :description, @description    # Ajout dans la table rssfeed du champ description
       @rssfeed.update_attribute :link, @link                  # Ajout dans la table rssfeed du champ link
@@ -15,16 +15,16 @@ class RssfeedController < ApplicationController
   # Methode de parsing du flux RSS, utilisant le parser FeedTools
   def rss(url)
     feed = FeedTools::Feed.open(url)
-    @title = "#{feed.title}"                      # Récupération du champ title
-    @description = "#{feed.description}"          # Récupération du champ description
-    @link = "#{feed.link}"                        # Récupération du champ link
+    @title = "#{feed.title}"                      # RÃ©cupÃ©ration du champ title
+    @description = "#{feed.description}"          # RÃ©cupÃ©ration du champ description
+    @link = "#{feed.link}"                        # RÃ©cupÃ©ration du champ link
   end
 
   #Suppression d'un flux de la base
   def destroy
-    r=Rssfeed.find(params[:id])   # recherche dans la base de données rssfeed du flux à supprimer
+    r=Rssfeed.find(params[:id])   # recherche dans la base de donnÃ©es rssfeed du flux Ã  supprimer
 
-    d = r.trackers_count        # on compte le nombre de suivis auxquels appartient le flux à supprimer
+    d = r.trackers_count        # on compte le nombre de suivis auxquels appartient le flux Ã  supprimer
     if d>0                      # si ce nombre est positif, on ne peut pas supprimer le flux
       flash[:warning] = 'Flux RSS utilis&eacute dans un ou plusieurs suivis : Suppression interdite tant que le ou les suivis existent'
     else
