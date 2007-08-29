@@ -1,31 +1,30 @@
 class RssfeedController < ApplicationController
 
   def manage
-    @rssfeed = Rssfeed.new(params[:rssfeed])  # Crï¿½ation d'une entrï¿½e dans la table rssfeed
-    if request.post? and @rssfeed.save        # si le formulaire a ï¿½tï¿½ rempli et validï¿½
-      rss(@rssfeed.url)                   # Appel de la mï¿½thode de parsing de flux RSS avec l'url saisie
+    @rssfeed = Rssfeed.new(params[:rssfeed])  # Création d'une entrée dans la table rssfeed
+    if request.post? and @rssfeed.save        # si le formulaire a été rempli et validï¿½
+      rss(@rssfeed.url)                   # Appel de la méthode de parsing de flux RSS avec l'url saisie
       @rssfeed.update_attribute :title , @title               # Ajout dans la table rssfeed du champ titre
       @rssfeed.update_attribute :description, @description    # Ajout dans la table rssfeed du champ description
       @rssfeed.update_attribute :link, @link                  # Ajout dans la table rssfeed du champ link
-      flash[:notice] = "Flux RSS ajout&eacute; avec succ&egrave;s. Ce flux sera traitï¿½ dans l'heure"
+      flash[:notice] = "Flux RSS ajout&eacute; avec succ&egrave;s. Ce flux sera trait&eacute; dans l'heure"
       redirect_to :controller => 'rssfeed', :action => 'manage' # actualisation de la page
     end
   end
 
-  # Methode alternative utilisant le parser FeedTools (non utilisï¿½e car problï¿½me de rï¿½glage du proxy)
-  # FeedTools est censï¿½ lire des flux RSS et ATOM
+  # Methode de parsing du flux RSS, utilisant le parser FeedTools
   def rss(url)
     feed = FeedTools::Feed.open(url)
-    @title = "#{feed.title}"                      # Rï¿½cupï¿½ration du champ title
-    @description = "#{feed.description}"          # Rï¿½cupï¿½ration du champ description
-    @link = "#{feed.link}"                        # Rï¿½cupï¿½ration du champ link
+    @title = "#{feed.title}"                      # Récupération du champ title
+    @description = "#{feed.description}"          # Récupération du champ description
+    @link = "#{feed.link}"                        # Récupération du champ link
   end
 
   #Suppression d'un flux de la base
   def destroy
-    r=Rssfeed.find(params[:id])   # recherche dans la base de donnï¿½es rssfeed du flux ï¿½ supprimer
+    r=Rssfeed.find(params[:id])   # recherche dans la base de données rssfeed du flux à supprimer
 
-    d = r.trackers_count        # on compte le nombre de suivis auxquels appartient le flux ï¿½ supprimer
+    d = r.trackers_count        # on compte le nombre de suivis auxquels appartient le flux à supprimer
     if d>0                      # si ce nombre est positif, on ne peut pas supprimer le flux
       flash[:warning] = 'Flux RSS utilis&eacute dans un ou plusieurs suivis : Suppression interdite tant que le ou les suivis existent'
     else
