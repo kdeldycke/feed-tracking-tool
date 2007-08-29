@@ -1,6 +1,5 @@
 class ProfileController < ApplicationController
 
-
   def index
     # Get the currrent user profile or create a new one if doesn't exist
     user_id = session[:user][:id]
@@ -33,5 +32,9 @@ class ProfileController < ApplicationController
     end
   end
 
+
+  def users
+    @users = Subscription.find(:all, :select => 'DISTINCT user_id' )        # R�cup�re dans la table subscription la liste des utilisateurs
+  end
 
 end

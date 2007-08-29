@@ -15,12 +15,18 @@ class SubscriptionController < ApplicationController
     end
   end
 
+
   def destroy
     s=Subscription.find(params[:id])   # recherche dans la base de donn�es subscription de l'abonnement � supprimer
     s.destroy                     # suppression
     s.save                        # sauvegarde
     flash[:notice] = 'Abonnement supprim&eacute; avec succ&egrave;s'
     redirect_to :controller => 'subscription', :action => 'manage'     # actualisation de la page
+  end
+
+
+  def trackers
+    @trackers = Subscription.find(:all, :select => 'DISTINCT tracker_id' )  # R�cup�re dans la table subscription la liste des suivis
   end
 
 end
