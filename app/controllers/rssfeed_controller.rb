@@ -1,6 +1,7 @@
 class RssfeedController < ApplicationController
 
   def manage
+    # TODO : Create an entry in rssfeed table only is the content is validated
     @rssfeed = Rssfeed.new(params[:rssfeed])  # Création d'une entrée dans la table rssfeed
     if request.post? and @rssfeed.save        # si le formulaire a été rempli et validé
       rss(@rssfeed.url)                   # Appel de la méthode de parsing de flux RSS avec l'url saisie

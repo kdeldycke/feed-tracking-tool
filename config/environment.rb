@@ -84,3 +84,7 @@ require 'feed_tools'
 
 FeedTools.configurations[:proxy_address] = "12.34.56.78"
 FeedTools.configurations[:proxy_port] = 8080
+
+#unicode support
+$KCODE = 'u'
+require_dependency 'jcode'
