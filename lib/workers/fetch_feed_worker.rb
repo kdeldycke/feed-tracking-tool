@@ -8,54 +8,61 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     # This method is called in it's own new thread when you
     # call new worker. args is set to :args
 
-    # TODO: Remove from the article database articles older than 31 days
-
     logger.info "Fetch the feeds !"
 
-    ###### Recherche des articles dans les flux RSS et mise en base + Filtrage
+    ###### Searching of articles in RSS feeds and update of database + Filtering
 
-    # Pour chaque entr�e de la table rssfeed
+    remove_old  # Removing of articles published before 1 month ago
+    
+    # For each entry of the rssfeed table
     Rssfeed.find(:all).each do |r|
-      rss_articles2(r.url)   # R�cup�ration de tous les articles contenus dans le flux RSS
+      rss_articles(r.url)   # Retrieval of all articles contained in the RSS feed
       i=0
-      while i < @size       # Parcours de tous les items lus dans le flux RSS
+      while i < @size       # Covering of all items read in the RSS feed
         t=0
-        Article.find(:all).each do |a|    # Pour chaque entr�e de la table article
-          if a.title == @title[i]         # Si le titre est le m�me, l'article existe d�j�
+        Article.find(:all).each do |a|    # For each entry of the article table
+          if a.title == @title[i]         # If the title is the same, the article already exists
             t=1
           end
         end
-        if t == 0     # L'article n'existe pas dans la table article
-          # Cr�ation d'une nouvelle entr�e dans la table article
+        if t == 0     # The article doesn't exist in the article table
+          # Creation of a new entry in the article table
           art=Article.new(:title => @title[i],
                           :url => @link[i],
                           :publication_date => @pubDate[i],
                           :content => @description[i],
                           :rssfeed_id => r.id)
-          art.save  # Sauvegarde
+          art.save
         end
         i+=1
       end
     end
 
-    # Filtrage des articles selon les expressions r�guli�res des suivis et remplissage de la table de liaison trackedarticles
-    # Pour chaque entr�e de la table tracker
+    find_tracked_articles # Finding of all tracked articles
+
+    ######
+    redirect_to :controller => 'dashboard', :action => 'display'
+  end
+  
+  def find_tracked_articles
+    # Filtering of articles by trackers regular expressions and update of relationship table trackedarticles
+    # For each entry of the tracker table
     Tracker.find(:all).each do |t|
-      # Et pour chaque entr�e de la table article
+      # And for each entry of the article table
       Article.find(:all, :conditions => [ "rssfeed_id = ?", t.rssfeed_id ]).each do |e|
-        # On v�rifie la pr�sence de l'expression r�guli�re dans le titre et dans la description de l'article
+        # Checking of the presence of the regex in the title or the description of the article
         if e.title.include? t.regex or e.content.include? t.regex
           u=0
-          TrackedArticle.find(:all).each do |c|    # Pour chaque entr�e de la table trackedarticle
-            if c.tracker_id == t.id and c.article_id == e.id         # Si l'id est le m�me, l'article existe d�j�
+          TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
+            if c.tracker_id == t.id and c.article_id == e.id         # If id is the same, the article already exists
               u=1
             end
           end
-          if u == 0     # L'article n'existe pas dans la table trackedarticle
-            # Cr�ation d'une nouvelle entr�e dans la table de liaison
+          if u == 0     # Article doesn't exist in trackedarticle table
+            # Creation of a new entry in the relationship table
             tr=TrackedArticle.new(:article_id => e.id,
                                   :tracker_id => t.id)
-            tr.save   # Sauvegarde
+            tr.save
           end
         end
       end
@@ -63,24 +70,71 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
     ######
 
-
     # Commit suicide
     self.delete
   end
+  
+  # Method for finding of all tracked articles
+  def find_tracked_articles
+    # Filtering of articles by trackers regular expressions and update of relationship table trackedarticles
+    # For each entry of the tracker table
+    Tracker.find(:all).each do |t|
+      # And for each entry of the article table
+      Article.find(:all, :conditions => [ "rssfeed_id = ?", t.rssfeed_id ]).each do |e|
+        # Checking of the presence of the regex in the title or the description of the article
+        if e.title.include? t.regex or e.content.include? t.regex
+          u=0
+          TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
+            if c.tracker_id == t.id and c.article_id == e.id         # If id is the same, the article already exists
+              u=1
+            end
+          end
+          if u == 0     # Article doesn't exist in trackedarticle table
+            # Creation of a new entry in the relationship table
+            tr=TrackedArticle.new(:article_id => e.id,
+                                  :tracker_id => t.id)
+            tr.save
+          end
+        end
+      end
+    end
+  end
+  
+  # Method for removing articles published before 1 month ago
+  def remove_old
+    # Removing of articles published before 1 month ago
+    # For each entry of the article table
+    Article.find(:all).each do |m|
+      unless m.publication_date.nil?  # Some articles don't have any publication date
+        if m.publication_date < (Time.now - 1.month)  # If the pub-date is older than 1 month ago
+          m.destroy                                   # Removing
+          m.save
+          # The removed article has to be removed from this table as well
+          TrackedArticle.find(:all).each do |t|
+            if t.article_id == m.id
+              t.destroy
+              t.save
+            end
+          end
+        end
+      end
+    end
+  end
 
-  ####### Methode pour de r�cup�ration et parsing des articles dans les flux RSS
+  ####### Method for retrieving articles from RSS feeds
 
+  # This method uses the Ruby RSS Parser (can only deal with XML feeds)
   def rss_articles(url)
     @pubDate = []
     @title = []
     @link = []
     @description = []
     @i=0;
-    open(url, :proxy => "http://12.34.56.78:8080") do |http|  # Ouverture de l'url en passant par le proxy
-      response = http.read                                    # Lecture de l'url
-      result = RSS::Parser.parse(response, false)             # Parsing du flux RSS
-      @size = result.items.size                               # Nombre d'items lus dans le flux RSS
-      result.items.each_with_index do |item, i|               # R�cup�ration des champs de chaque article
+    open(url, :proxy => "http://12.34.56.78:8080") do |http|  # Opening url through the proxy
+      response = http.read                                    # Reading of url
+      result = RSS::Parser.parse(response, false)             # Parsing of RSS feed
+      @size = result.items.size                               # Number of items read in the RSS feed
+      result.items.each_with_index do |item, i|               # Retrieving of the RSS feed fields
         (@pubDate[i] = "#{item.pubDate}") and
         (@title[i] = "#{item.title}") and
         (@link[i] = "#{item.link}") and
@@ -89,6 +143,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     end
   end
 
+  # This method uses the Simple-rss Parser (can deal with more formats)
   def rss_articles2(url)
     @pubDate = []
     @title = []
@@ -98,11 +153,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
     feed = SimpleRSS.parse open(url, :proxy => "http://12.34.56.78:8080")
 
-    #@title = "#{feed.channel.title}"                      # R�cup�ration du champ title
-    #@description = "#{feed.channel.description}"          # R�cup�ration du champ description
-    #@link = "#{feed.channel.link}"                        # R�cup�ration du champ link
-
-    @size = feed.items.size                               # Nombre d'items lus dans le flux RSS
+    @size = feed.items.size                               # Number of items read in the RSS feed
     feed.items.each_with_index do |item, i|
       (@pubDate[i] = "#{item.pubDate}") and
       (@title[i] = "#{item.title}") and

@@ -1,6 +1,6 @@
 <h2>Tableau de bord</h2><br>
 
-<%= link_to 'MAJ Articles', :controller => 'dashboard', :action => 'update' %>
+<p><%= link_to 'MAJ Articles', :controller => 'dashboard', :action => 'update' %></p>
 
 <p><h4>Vos suivis en cours</h4></p>
 
@@ -11,12 +11,12 @@
 	  <th>Flux RSS</th>
 	  <th>Fr&eacute;quence (j)</th>
 
-	<!-- Pour chaque entr�e de la table subscription dont le champ user_id correspond � l'utilisateur courant -->
+	<!-- For each entry of the subscription table where user_id matches with the current user -->
 	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |s| -%>
 	    <tr>
-	    	<td><%= Tracker.find_by_id(s.tracker_id).title %></td>		<!-- Affiche le titre du suivi -->
-			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title %></td>	<!-- Affiche le titre du flux RSS associ� -->
-			<td align="center"><%= s.frequency %></td>		<!-- Affiche la fr�quence de r�ception -->
+	    	<td><%= Tracker.find_by_id(s.tracker_id).title %></td>		<!-- Displays tracker title -->
+			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title %></td>	<!-- Displays assiocated RSS feed title -->
+			<td align="center"><%= s.frequency %></td>		<!-- Displays reception frequency -->
 	    </tr>
 	<% end -%>
 
@@ -34,9 +34,9 @@
 	  <th>Suivi</th>
 	</tr>
 
-	<!-- Pour chaque entr�e de la table subscription dont le champ user_id correspond � l'utilisateur courant -->
+	<!-- For each entry of the subscription table where user_id matches with the current user -->
     <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |n| %>
-      <!-- Pour chaque entr�e de la table trackedarticle (table de liaison) dont le champ tracker_id correspond � l'utilisateur courant -->
+      <!-- For each entry of the trackedarticle (relationship table) table where tracker_id matches with the current user -->
 	  <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
 	  	<% v=0 %>
 		<% SentArticleArchive.find(:all).each do |h| %>
@@ -46,10 +46,10 @@
 		<% end %>
 		<% if v==0 %>
 		  	<tr>
-		  		<td><%= Article.find_by_id(k.article_id).publication_date %></td>	<!-- Affiche la date de publication de l'article -->
-		    	<td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>	<!-- Affiche le titre et le lien vers l'article -->
-				<td><%= Article.find_by_id(k.article_id).content %></td>	<!-- Affiche la description de l'article -->
-		    	<td><%= Tracker.find_by_id(k.tracker_id).title %></td>	<!-- Affiche le titre du suivi -->
+		  		<td><%= Article.find_by_id(k.article_id).publication_date %></td>	<!-- Displays publication date of the article -->
+		    	<td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>	<!-- Displays title and link towards the article -->
+				<td><%= Article.find_by_id(k.article_id).content %></td>	<!-- Displays description of the article -->
+		    	<td><%= Tracker.find_by_id(k.tracker_id).title %></td>	<!-- Displays tracker title -->
 		    </tr>
 		<% end %>
       <% end %>
