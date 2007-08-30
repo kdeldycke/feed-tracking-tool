@@ -15,6 +15,8 @@ class ProfileController < ApplicationController
       profile.email = params[:profile][:email]
       profile.suspend_email = params[:profile][:suspend_email]
       profile.display_name = params[:profile][:display_name]
+      # Update session with new user's dispay_name
+      session[:user][:display_name] = profile.display_name
       # Try to save the new profile in the database
       if profile.save
         flash[:notice] = 'Preferences updated'

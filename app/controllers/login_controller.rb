@@ -19,10 +19,6 @@ class LoginController < ApplicationController
     auth_result = LDAP.authenticateByDN(dn, pwd)
     if auth_result[:authenticated]
       user_details = LDAP.getAttributeList(login, pwd)
-      session[:user] = {:login        => login,
-                        :id           => dn,
-                        :display_name => user_details[:displayname],
-                       }
       # Create new profile and update default mail if necessary
       profile = Profile.find_by_user_id(dn)
       if not profile:
@@ -40,6 +36,11 @@ class LoginController < ApplicationController
         # TODO: do not get display_name or email adress from the LDAP if not empty
         profile.update_attribute :display_name, user_details[:displayname]
       end
+      # Register user in the session
+      session[:user] = {:login        => login,
+                        :id           => dn,
+                        :display_name => Profile.find_by_user_id(dn).display_name
+                       }
       # Redirect to the right place
       if session[:return_to]
         redirect_to_path(session[:return_to])
