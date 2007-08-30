@@ -48,7 +48,7 @@
 		  	<tr>
 		  		<td><%= Article.find_by_id(k.article_id).publication_date %></td>	<!-- Displays publication date of the article -->
 		    	<td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>	<!-- Displays title and link towards the article -->
-				<td><%= Article.find_by_id(k.article_id).content %></td>	<!-- Displays description of the article -->
+				<td><%= Article.find_by_id(k.article_id).description %></td>	<!-- Displays description of the article -->
 		    	<td><%= Tracker.find_by_id(k.tracker_id).title %></td>	<!-- Displays tracker title -->
 		    </tr>
 		<% end %>

@@ -28,7 +28,7 @@ class DashboardController < ApplicationController
           art=Article.new(:title => @title[i],
                           :url => @link[i],
                           :publication_date => @pubDate[i],
-                          :content => @description[i],
+                          :description => @description[i],
                           :rssfeed_id => r.id)
           art.save
         end
@@ -51,8 +51,8 @@ class DashboardController < ApplicationController
       # And for each entry of the article table
       Article.find(:all, :conditions => [ "rssfeed_id = ?", t.rssfeed_id ]).each do |e|
         # Checking of the presence of the regex in the title or the description of the article
-        unless e.title.nil? or e.content.nil?
-          if e.title.include? t.regex or e.content.include? t.regex
+        unless e.title.nil? or e.description.nil?
+          if e.title.include? t.regex or e.description.include? t.regex
             u=0
             TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
               if c.tracker_id == t.id and c.article_id == e.id         # If id is the same, the article already exists
@@ -98,13 +98,17 @@ class DashboardController < ApplicationController
     @link = []
     @description = []
     @i=0;
+    bef="BEFORE : "
+    aft="AFTER : "
     feed = FeedTools::Feed.open(url)          # Opening url
     @size = feed.items.size                   # Number of items read in the RSS feed
     feed.items.each_with_index do |item, i|   # Retrieving of the RSS feed fields
       @pubDate[i] = item.time
       @title[i] = convert_unicode(item.title)
       @link[i] = item.link
+      logger.info bef+item.description
       @description[i] = convert_unicode(item.description)
+      logger.info aft+@description[i]
     end
   end
 

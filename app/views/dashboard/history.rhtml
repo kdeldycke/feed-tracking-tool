@@ -25,7 +25,7 @@
 		<tr>
 	  		<td><%= Article.find_by_id(k.article_id).publication_date %></td>	<!-- Affiche la date de publication de l'article -->
 	    	<td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>	<!-- Affiche le titre et le lien vers l'article -->
-			<td><%= Article.find_by_id(k.article_id).content %></td>	<!-- Affiche la description de l'article -->
+			<td><%= Article.find_by_id(k.article_id).description %></td>	<!-- Affiche la description de l'article -->
 	    	<td><%= Tracker.find_by_id(k.tracker_id).title %></td>	<!-- Affiche le titre du suivi -->
 			<% if v==1 %>
 				<td>Envoy&eacute;</td>
