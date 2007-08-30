@@ -42,34 +42,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
     ######
     redirect_to :controller => 'dashboard', :action => 'display'
-  end
-  
-  def find_tracked_articles
-    # Filtering of articles by trackers regular expressions and update of relationship table trackedarticles
-    # For each entry of the tracker table
-    Tracker.find(:all).each do |t|
-      # And for each entry of the article table
-      Article.find(:all, :conditions => [ "rssfeed_id = ?", t.rssfeed_id ]).each do |e|
-        # Checking of the presence of the regex in the title or the description of the article
-        if e.title.include? t.regex or e.content.include? t.regex
-          u=0
-          TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
-            if c.tracker_id == t.id and c.article_id == e.id         # If id is the same, the article already exists
-              u=1
-            end
-          end
-          if u == 0     # Article doesn't exist in trackedarticle table
-            # Creation of a new entry in the relationship table
-            tr=TrackedArticle.new(:article_id => e.id,
-                                  :tracker_id => t.id)
-            tr.save
-          end
-        end
-      end
-    end
-
-    ######
-
+    
     # Commit suicide
     self.delete
   end
@@ -82,18 +55,20 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
       # And for each entry of the article table
       Article.find(:all, :conditions => [ "rssfeed_id = ?", t.rssfeed_id ]).each do |e|
         # Checking of the presence of the regex in the title or the description of the article
-        if e.title.include? t.regex or e.content.include? t.regex
-          u=0
-          TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
-            if c.tracker_id == t.id and c.article_id == e.id         # If id is the same, the article already exists
-              u=1
+        unless e.title.nil? or e.content.nil?
+          if e.title.include? t.regex or e.content.include? t.regex
+            u=0
+            TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
+              if c.tracker_id == t.id and c.article_id == e.id         # If id is the same, the article already exists
+                u=1
+              end
             end
-          end
-          if u == 0     # Article doesn't exist in trackedarticle table
-            # Creation of a new entry in the relationship table
-            tr=TrackedArticle.new(:article_id => e.id,
-                                  :tracker_id => t.id)
-            tr.save
+            if u == 0     # Article doesn't exist in trackedarticle table
+              # Creation of a new entry in the relationship table
+              tr=TrackedArticle.new(:article_id => e.id,
+                                    :tracker_id => t.id)
+              tr.save
+            end
           end
         end
       end
@@ -128,14 +103,13 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     @link = []
     @description = []
     @i=0;
-    
     feed = FeedTools::Feed.open(url)          # Opening url
     @size = feed.items.size                   # Number of items read in the RSS feed
     feed.items.each_with_index do |item, i|   # Retrieving of the RSS feed fields
-      (@pubDate[i] = item.time) and
-      (@title[i] = item.title) and
-      (@link[i] = item.link) and
-      (@description[i] = item.description)
+      @pubDate[i] = item.time
+      @title[i] = convert_unicode(item.title)
+      @link[i] = item.link
+      @description[i] = convert_unicode(item.description)
     end
   end
 

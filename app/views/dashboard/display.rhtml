@@ -9,13 +9,13 @@
 	<tr>
 	  <th>Titre du suivi</th>
 	  <th>Flux RSS</th>
-	  <th>Fr&eacute;quence (j)</th>
+	  <th>Fréquence (j)</th>
 
 	<!-- For each entry of the subscription table where user_id matches with the current user -->
 	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |s| -%>
 	    <tr>
 	    	<td><%= Tracker.find_by_id(s.tracker_id).title %></td>		<!-- Displays tracker title -->
-			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title %></td>	<!-- Displays assiocated RSS feed title -->
+			<td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).url %></td>	<!-- Displays assiocated RSS feed title -->
 			<td align="center"><%= s.frequency %></td>		<!-- Displays reception frequency -->
 	    </tr>
 	<% end -%>

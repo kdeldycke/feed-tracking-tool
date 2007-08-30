@@ -16,9 +16,14 @@ class RssfeedController < ApplicationController
   # Methode de parsing du flux RSS, utilisant le parser FeedTools
   def rss(url)
     feed = FeedTools::Feed.open(url)
-    @title = "#{feed.title}"                      # Récupération du champ title
-    @description = "#{feed.description}"          # Récupération du champ description
-    @link = "#{feed.link}"                        # Récupération du champ link
+    
+    #@title = feed.title                       # Récupération du champ title
+    #@description = feed.description          # Récupération du champ description
+    #@link = feed.link                        # Récupération du champ link
+    
+    @title = convert_unicode(feed.title)                # Récupération du champ title
+    @description = convert_unicode(feed.description)    # Récupération du champ description
+    @link = feed.link                                   # Récupération du champ link
   end
 
   #Suppression d'un flux de la base
