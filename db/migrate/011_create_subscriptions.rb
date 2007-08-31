@@ -6,7 +6,6 @@ class CreateSubscriptions < ActiveRecord::Migration
       t.column :date_lastmail, :datetime
       t.column :frequency, :integer
     end
-    drop_table :mail_frequency
   end
 
   def self.down
