@@ -11,10 +11,10 @@
 
   <% unless session[:user].blank? %>
     <ul id="navigation">
-      <li><%= link_to "Source Feed", :controller => 'rssfeed', :action => 'manage' %></li>
-      <li><%= link_to "Trackers", :controller => 'tracker', :action => 'edit' %></li>
-      <li><%= link_to "Tracker's Stats", :controller => 'profile', :action => 'users' %></li>
-      <li><%= link_to "User's Stats", :controller => 'subscription', :action => 'trackers' %></li>
+      <li><%= link_to "Manage Source Feeds", :controller => 'rssfeed', :action => 'manage' %></li>
+      <li><%= link_to "Edit Trackers", :controller => 'tracker', :action => 'edit' %></li>
+      <li><%= link_to "Users Statistics", :controller => 'profile', :action => 'users' %></li>
+      <li><%= link_to "Trackers Statistics", :controller => 'subscription', :action => 'trackers' %></li>
     </ul>
   <% end %>
 
