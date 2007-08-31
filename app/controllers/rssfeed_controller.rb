@@ -1,44 +1,50 @@
 class RssfeedController < ApplicationController
 
   def manage
-    # TODO : Create an entry in rssfeed table only is the content is validated
-    @rssfeed = Rssfeed.new(params[:rssfeed])  # Création d'une entrée dans la table rssfeed
-    if request.post? and @rssfeed.save        # si le formulaire a été rempli et validé
-      rss(@rssfeed.url)                   # Appel de la méthode de parsing de flux RSS avec l'url saisie
-      @rssfeed.update_attribute :title , @title               # Ajout dans la table rssfeed du champ titre
-      @rssfeed.update_attribute :description, @description    # Ajout dans la table rssfeed du champ description
-      @rssfeed.update_attribute :link, @link                  # Ajout dans la table rssfeed du champ link
-      flash[:notice] = "Flux RSS ajouté avec succès. Ce flux sera traité dans l'heure"
-      redirect_to :controller => 'rssfeed', :action => 'manage' # actualisation de la page
+    rssfeed = Rssfeed.new(params[:rssfeed])  # Creation of an entry in rssfeed table
+    if request.post?
+      if rss(rssfeed.url) == true # If the feed from the url entered in the form can be parsed
+        if rssfeed.save       # If the form has been validated
+          rssfeed.update_attribute :title , @title               # The title field is updated in the rssfeed table
+          rssfeed.update_attribute :description, @description    # The description field is updated in the rssfeed table
+          rssfeed.update_attribute :link, @link                  # The link field is updated in the rssfeed table
+          flash[:notice] = "RSS feed added successfully. This feed will be taken into account within the hour."
+        end
+      else
+        flash[:warning] = "Invalid URL!"
+        @rssfeed = rssfeed
+      end
+      redirect_to :controller => 'rssfeed', :action => 'manage' # Refreshing page
     end
   end
 
-  # Methode de parsing du flux RSS, utilisant le parser FeedTools
+  # Method for parsing an RSS feed, using the FeedTools parser
   def rss(url)
-    feed = FeedTools::Feed.open(url)
-    
-    #@title = feed.title                       # Récupération du champ title
-    #@description = feed.description          # Récupération du champ description
-    #@link = feed.link                        # Récupération du champ link
-    
-    @title = convert_unicode(feed.title)                # Récupération du champ title
-    @description = convert_unicode(feed.description)    # Récupération du champ description
-    @link = feed.link                                   # Récupération du champ link
+    ret = false
+    feed = FeedTools::Feed.open(url)  # Creation of an instance of FeedTools and opening of the feed
+    # If the parsing return nil fields, the feed is not valid
+    unless feed.title.nil? and feed.description.nil? and feed.link.nil?
+      @title = convert_unicode(feed.title)                # We get the title field and convert it to unicode if needed
+      @description = convert_unicode(feed.description)    # We get the description field and convert it to unicode if needed
+      @link = feed.link                                   # We get the link field
+      ret = true        # The return value is set to true (the field is valid)
+    end
+    return ret
   end
 
-  #Suppression d'un flux de la base
+  # Method for removing a feed from the database
   def destroy
-    r=Rssfeed.find(params[:id])   # recherche dans la base de données rssfeed du flux à supprimer
+    r = Rssfeed.find(params[:id])   # Searching in the database of the feed to remove
 
-    d = r.trackers_count        # on compte le nombre de suivis auxquels appartient le flux à supprimer
-    if d>0                      # si ce nombre est positif, on ne peut pas supprimer le flux
-      flash[:warning] = 'Flux RSS utilis&eacute dans un ou plusieurs suivis : Suppression interdite tant que le ou les suivis existent'
+    d = r.trackers_count        # We count the number of trackers associated to this feed
+    if d>0                      # If this number is positive, we can't remove the RSS feed
+      flash[:warning] = 'RSS feed used in one ore more trackers : Removing it is forbidden until tracker(s) exists.'
     else
-      r.destroy                     # suppression
-      r.save                        # sauvegarde
-      flash[:notice] = 'Flux RSS supprimé avec succès'
+      r.destroy                     # Destroying the feed
+      r.save
+      flash[:notice] = 'RSS feed removed successfully!'
     end
-    redirect_to :controller => 'rssfeed', :action => 'manage' # actualisation de la page
+    redirect_to :controller => 'rssfeed', :action => 'manage' # Refreshing page
   end
 
 end
