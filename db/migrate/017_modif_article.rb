@@ -4,6 +4,6 @@ class ModifArticle < ActiveRecord::Migration
   end
 
   def self.down
-    remove__column :article, :rssfeed_id
+    remove_column :article, :rssfeed_id
   end
 end
