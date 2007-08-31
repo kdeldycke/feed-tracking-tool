@@ -1,22 +1,22 @@
-<p>Bonjour <%= @username %>, <br/>
-Voici des articles susceptibles de vous int&eacute;resser.
+<p>Hello <%= @username %>, <br/>
+Here you will find articles which could be interesting for you.
 </p>
 
-<p><b>Suivi: </b><%= @tracker %></p>
-<p><b>Flux Rss: </b><%= link_to @rssfeed_title, @rssfeed_url %></p>
+<p><b>Tracker: </b><%= @tracker %></p>
+<p><b>RSS feed: </b><%= link_to @rssfeed_title, @rssfeed_url %></p>
 <hr />
 
 <ul id="articles">
 	<% ArticleToSend.find(:all).each do |o| %>
 		<li>
-		    <h4><%= link_to Article.find_by_id(o.article_id).title, Article.find_by_id(o.article_id).url %></h4>	<!-- Affiche le titre et le lien vers l'article -->
-			<p><%= Article.find_by_id(o.article_id).publication_date %></p>	<!-- Affiche la date de publication de l'article -->
-			<p><%= Article.find_by_id(o.article_id).description %><br /></p>	<!-- Affiche la description de l'article -->
+		    <h4><%= link_to Article.find_by_id(o.article_id).title, Article.find_by_id(o.article_id).url %></h4>	<!-- Displays title and link to the article -->
+			<p><%= Article.find_by_id(o.article_id).publication_date %></p>	<!-- Displays article's publication date -->
+			<p><%= Article.find_by_id(o.article_id).description %><br /></p>	<!-- Displays article's description -->
 			<hr />
 		</li>
 	<% end %>
 </ul>
 
 <p>
-	Si vous ne d&eacute;sirez plus recevoir de mails d'OVT, veuillez modifier vos pr&eacute;f&eacute;rences dans l'application.
+	If you don't want to receive emails from FFT anymore, please modify your preferences in the application.
 </p>

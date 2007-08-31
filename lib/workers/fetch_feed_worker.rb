@@ -81,7 +81,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     # For each entry of the article table
     Article.find(:all).each do |m|
       unless m.publication_date.nil?  # Some articles don't have any publication date
-        if m.publication_date < (Time.now - 1.month)  # If the pub-date is older than 1 month ago
+        if m.publication_date < (Time.now - 5.day)  # If the pub-date is older than 1 month ago
           m.destroy                                   # Removing
           m.save
           # The removed article has to be removed from this table as well
