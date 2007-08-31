@@ -2,19 +2,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-  <title>Outil de Veille Technologique</title>
+  <title>Feed Tracking Tool</title>
   <%= stylesheet_link_tag 'style' %>
 </head>
 <body>
 
-  <h1 style="color: #fff">Outil de Veille Technologique</h1>
+  <h1 style="color: #fff">Feed Tracking Tool (aka FTT)</h1>
 
   <% unless session[:user].blank? %>
     <ul id="navigation">
-      <li><%= link_to 'Gestion des flux RSS', :controller => 'rssfeed', :action => 'manage' %></li>
-      <li><%= link_to 'Edition des suivis', :controller => 'tracker', :action => 'edit' %></li>
-      <li><%= link_to 'Suivis par utilisateur', :controller => 'profile', :action => 'users' %></li>
-      <li><%= link_to 'Utilisateurs par suivi', :controller => 'subscription', :action => 'trackers' %></li>
+      <li><%= link_to "Source Feed", :controller => 'rssfeed', :action => 'manage' %></li>
+      <li><%= link_to "Trackers", :controller => 'tracker', :action => 'edit' %></li>
+      <li><%= link_to "Tracker's Stats", :controller => 'profile', :action => 'users' %></li>
+      <li><%= link_to "User's Stats", :controller => 'subscription', :action => 'trackers' %></li>
     </ul>
   <% end %>
 
@@ -24,11 +24,11 @@
         <p align=right>
       <!-- TODO: get display name from preferences -->
       Logged in as: <%= session[:user][:display_name] %>
-      | <%= link_to 'Tableau de bord', :controller => 'dashboard', :action => 'display' %>
-      | <%= link_to 'Mes suivis', :controller => 'subscription', :action => 'manage' %>
-      | <%= link_to 'Historique', :controller => 'dashboard', :action => 'history' %>
+      | <%= link_to 'Dashboard', :controller => 'dashboard', :action => 'display' %>
+      | <%= link_to 'My Trackers', :controller => 'subscription', :action => 'manage' %>
+      | <%= link_to "Archives", :controller => 'dashboard', :action => 'history' %>
       | <%= link_to 'Preferences', :controller => 'profile', :action => 'edit' %>
-      | <%= link_to 'D&eacute;connexion', :controller => 'login', :action => 'logout' %>
+      | <%= link_to 'Logout', :controller => 'login', :action => 'logout' %>
           </p>
     <% end %>
 
