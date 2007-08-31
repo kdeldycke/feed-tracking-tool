@@ -2,7 +2,7 @@
 
 <div class="user">
 
-<p><h4>Suivis en cours pour <%= user.user_id %></h4></p>
+<p><h4>Suivis en cours pour <%= Profile.find_by_user_id(user.user_id).display_name %></h4></p>
 
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
 
@@ -14,7 +14,7 @@
 	<% Subscription.find(:all, :conditions => [ "user_id = ?", user.user_id ]).each do |j| -%>
 	    <tr>
 			<td><%= Tracker.find_by_id(j.tracker_id).title %></td>	<!-- Affiche le titre du suivi -->
-			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title %></td>	<!-- Affiche le titre du flux RSS associé -->
+			<td><%= Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title %></td>	<!-- Affiche le titre du flux RSS associï¿½ -->
 	    </tr>
 	<% end -%>
 
