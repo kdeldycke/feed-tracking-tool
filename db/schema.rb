@@ -7,10 +7,10 @@ ActiveRecord::Schema.define(:version => 22) do
   create_table "article", :force => true do |t|
     t.column "title",            :string
     t.column "url",              :string
+    t.column "description",      :text
     t.column "publication_date", :datetime
     t.column "fetch_date",       :datetime
     t.column "rssfeed_id",       :integer
-    t.column "description",      :text
   end
 
   create_table "article_to_send", :force => true do |t|
@@ -28,10 +28,10 @@ ActiveRecord::Schema.define(:version => 22) do
 
   create_table "rssfeed", :force => true do |t|
     t.column "title",       :string
+    t.column "description", :text
     t.column "url",         :string
     t.column "tracked",     :boolean
     t.column "link",        :string
-    t.column "description", :text
   end
 
   create_table "sent_article_archive", :force => true do |t|
