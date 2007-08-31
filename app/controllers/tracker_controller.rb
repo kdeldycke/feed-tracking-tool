@@ -1,31 +1,31 @@
 class TrackerController < ApplicationController
   
   def edit
-    @tracker = Tracker.new(params[:tracker])  # Création d'une entrée dans la table tracker
-    @feeds = Rssfeed.find(:all)               # récupération des flux RSS dans la table rssfeed
-    @selected_feed = []                        # variable pour récupérer le flux sélectionné
+    @tracker = Tracker.new(params[:tracker])  # Creation of a new entry in tracker table
+    @feeds = Rssfeed.find(:all)               # Gets RSS feeds in rssfeed table
+    @selected_feed = []                        # Used to get the selected feed
     
     if request.post? and @tracker.save
-      #if 
-      @selected_feed = params[:rssfeed][:id]                      # récupération du flux sélectionné
-      @tracker.update_attribute :rssfeed_id, @selected_feed          # MAJ du champ feed_id dans la table rssfeed
-      flash[:notice] = "Suivi ajout&eacute; avec succ&egrave;s. Vous pouvez vous abonner a ce suivi dans l'onglet Gestion des abonnements aux suivis"
-      redirect_to :controller => 'tracker', :action => 'edit'     # actualisation de la page
+      @selected_feed = params[:rssfeed][:id]                      # We get the selected feed
+      @tracker.update_attribute :rssfeed_id, @selected_feed          # Update of feed_id field rssfeed table
+      flash[:notice] = "Tracker added successfully. You can subscribe to this tracker through 'My Trackers'."
+      redirect_to :controller => 'tracker', :action => 'edit'     # Refreshing page
     end
   end
   
+  # Method for removing a tracker
   def destroy
-    t=Tracker.find(params[:id])   # recherche dans la base de données tracker du suivi à supprimer
+    t=Tracker.find(params[:id])   # Searching in database the tracker to remove
     
-    d = t.subscriptions_count   # on compte le nombre d'abonnements au suivi à supprimer
-    if d>0                      # si ce nombre est positif, on ne peut pas supprimer le suivi
-      flash[:warning] = 'Un ou plusieurs utilisateurs sont abonn&eacute;s a ce suivi : Suppression interdite tant que le ou les abonnements existent'
+    d = t.subscriptions_count   # We count the number of subscriptions to this tracker
+    if d>0                      # If this number is positive, we can't remove the tracker
+      flash[:warning] = 'One or more users have subscribed to this tracker : Removing it is forbidden until subscription(s) exists.'
     else
-      t.destroy                     # suppression
-      t.save                        # sauvegarde
-      flash[:notice] = 'Suivi supprim&eacute; avec succ&egrave;s'
+      t.destroy                     # Destroying the tracker
+      t.save
+      flash[:notice] = 'Tracker deleted successfully!'
     end 
-    redirect_to :controller => 'tracker', :action => 'edit'     # actualisation de la page
+    redirect_to :controller => 'tracker', :action => 'edit'     # Refreshing page
   end
   
 end

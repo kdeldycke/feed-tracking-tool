@@ -1,48 +1,48 @@
-<h2>Edition des suivis</h2><br>
+<h2>Edit Trackers</h2><br>
 
-<% form_for :tracker do |f| %>		<!-- Formulaire de remplissage de l'entrée créée dans la table tracker -->
+<% form_for :tracker do |f| %>		<!-- Form to fill in the entry created in the tracker table -->
 <p>
-  Titre du suivi:
-  <%= f.text_field :title %>		<!-- Champ title -->
+  Tracker's title:
+  <%= f.text_field :title %>		<!-- title field -->
 </p>
 
 <p>
-  Flux RSS:
-  <%= collection_select(:rssfeed, :id, @feeds, :id, :title) %>	<!-- Liste déroulante contenant les flux RSS existant -->
+  RSS feed:
+  <%= collection_select(:rssfeed, :id, @feeds, :id, :title) %>	<!-- List containing existing RSS feeds -->
 </p>
 
 <p>
-  Filtre / Expression r&eacute;guli&egrave;re:
-  <%= f.text_field :regex %>						<!-- Champ regex -->
+  Filter / Regular expression:
+  <%= f.text_field :regex %>						<!-- regex field -->
 </p>
 <p>
-  <%= submit_tag 'Ajouter'%>
+  <%= submit_tag 'Add'%>
 </p>
 <% end %>
 
-<p><h4>Suivis existant dans la base de donn&eacute;es OVT</h4></p>
+<p><h4>Trackers existing in FTT database</h4></p>
 
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
 
 	<tr>
-	  <th>Titre</th>
-	  <th>Flux RSS</th>
-	  <th>XML</th>
-	  <th>Filtre</th>
-	  <th>Suivi</th>
-	  <th>Modifier</th>
-	  <th>Supprimer</th>
+	  <th>Title</th>
+	  <th>RSS feed</th>
+	  <th>URL</th>
+	  <th>Filter</th>
+	  <th>Tracked</th>
+	  <th>Modify</th>
+	  <th>Remove</th>
 	</tr>
 	
-	<% Tracker.find(:all).each do |j| -%>		<!-- Pour chaque entrée de la table tracker -->
+	<% Tracker.find(:all).each do |j| -%>		<!-- For each entry of the tracker table -->
 	    <tr>
-	    	<td><%= j.title %></td>										<!-- Affiche le titre du suivi -->
-			<td><%= link_to Rssfeed.find_by_id(j.rssfeed_id).title, Rssfeed.find_by_id(j.rssfeed_id).link %></td>		<!-- recherche le flux RSS associé dans la table rssfeed -->
+	    	<td><%= j.title %></td>										<!-- Displays tracker's title -->
+			<td><%= link_to Rssfeed.find_by_id(j.rssfeed_id).title, Rssfeed.find_by_id(j.rssfeed_id).link %></td>		<!-- Search the associated RSS feed in rssfeed table -->
 			<td align="center"><%= link_to_image 'rss.gif', Rssfeed.find_by_id(j.rssfeed_id).url %></td>
-			<td><%= j.regex %></td>										<!-- Affiche l'expression régulière -->
-			<td><%=  %></td>
-			<td><%=  %></td>
-			<td><%= link_to 'Supprimer', url_for(:action => 'destroy', :id => j.id) %></td>	<!-- Suppression (lien sur l'action destroy) -->
+			<td><%= j.regex %></td>										<!-- Displays tracker's filter / regular expression -->
+			<td><%=  %></td> <!-- Column 'Tracked', indicates if one ore more users have subscribed to this tracker. Not implemented yet. -->
+			<td><%=  %></td> <!-- Column 'Modify', for modifying the tracker. Not implemented yet. -->
+			<td><%= link_to 'Remove', url_for(:action => 'destroy', :id => j.id) %></td>	<!-- Removing tracker (link to action destroy) -->
 	    </tr>
 	<% end -%>
 
