@@ -36,7 +36,7 @@ class ProfileController < ApplicationController
 
 
   def users
-    @users = Subscription.find(:all, :select => 'DISTINCT user_id' )        # R�cup�re dans la table subscription la liste des utilisateurs
+    @users = Subscription.find(:all, :select => 'DISTINCT user_id' )        # Gets list of users in subscription table
   end
 
 end
