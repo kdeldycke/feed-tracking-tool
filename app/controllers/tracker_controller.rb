@@ -7,7 +7,7 @@ class TrackerController < ApplicationController
     
     if request.post? and @tracker.save
       @selected_feed = params[:rssfeed][:id]                      # We get the selected feed
-      @tracker.update_attribute :rssfeed_id, @selected_feed          # Update of feed_id field rssfeed table
+      @tracker.update_attribute :rssfeed_id, @selected_feed          # Update of feed_id field in rssfeed table
       flash[:notice] = "Tracker added successfully. You can subscribe to this tracker through 'My Trackers'."
       redirect_to :controller => 'tracker', :action => 'edit'     # Refreshing page
     end
@@ -15,7 +15,7 @@ class TrackerController < ApplicationController
   
   # Method for removing a tracker
   def destroy
-    t=Tracker.find(params[:id])   # Searching in database the tracker to remove
+    t=Tracker.find(params[:id])   # Searching in database for the tracker to remove
     
     d = t.subscriptions_count   # We count the number of subscriptions to this tracker
     if d>0                      # If this number is positive, we can't remove the tracker

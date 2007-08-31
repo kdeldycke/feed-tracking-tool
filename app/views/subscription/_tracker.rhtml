@@ -1,13 +1,13 @@
-<!-- Partial affichant la liste des utilisateurs abonn�s � un suivi -->
+<!-- Partial displaying a list of users who have subscribed to a tracker -->
 
 <div class="tracker">
 
 <p><h4><%= Tracker.find_by_id(tracker.tracker_id).title %></h4></p>
 
 <ul>
-	<!-- Parcourt les utilisateurs abonn�s au suivi courant -->
+	<!-- Covering users for the current tracker -->
 	<% Subscription.find(:all, :conditions => [ "tracker_id = ?", tracker.tracker_id ]).each do |j| -%>
-	    <li><%= Profile.find_by_user_id(j.user_id).display_name %></li>	<!-- Affiche le nom de l'utilisateur -->
+	    <li><%= Profile.find_by_user_id(j.user_id).display_name %></li>	<!-- Displays user's display_name -->
 	<% end -%>
 </ul>
 

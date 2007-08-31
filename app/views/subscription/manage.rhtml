@@ -1,38 +1,38 @@
-<h2>Gestion des abonnements aux suivis</h2><br>
+<h2>Manage my subscriptions</h2><br>
 
 <%= error_messages_for 'subscription' %>
 
-<% form_for :subscription do |f| %>		<!-- Formulaire de remplissage de l'entr�e cr��e dans la table subscription -->
+<% form_for :subscription do |f| %>		<!-- Form to fill in the entry created in the subscription table -->
 <p>
-  Suivi:
-  <%= collection_select(:tracker, :id, @trackers, :id, :title) %>	<!-- Liste d�roulante contenant les suivis existant -->
+  Tracker:
+  <%= collection_select(:tracker, :id, @trackers, :id, :title) %>	<!-- List containing existing trackers -->
 </p>
 <p>
-  Fr&eacute;quence de r&eacute;ception (en jours):
-  <%= f.text_field :frequency %>					<!-- Saisie de la fr�quence de r�ception du suivi -->
+  Reception frequency (days):
+  <%= f.text_field :frequency %>
 </p>
-  <%= submit_tag 'Ajouter'%>
+  <%= submit_tag 'Subscribe'%>
 </p>
 <% end %>
 
-<p><h4>Vos suivis en cours</h4></p>
+<p><h4>My Trackers</h4></p>
 
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
 
 	<tr>
-	  <th>Titre du suivi</th>
-	  <th>Flux RSS</th>
-	  <th>XML</th>
-	  <th>Fr&eacute;quence (j)</th>
-	  <th>Annuler</th>
+	  <th>Tracker's title</th>
+	  <th>RSS feed</th>
+	  <th>URL</th>
+	  <th>Frequency (days)</th>
+	  <th>Cancel</th>
 
-	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |j| -%>	<!-- Pour chaque entr�e de la table subscription dont le champ user_id correspond � l'utilisateur courant -->
+	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |j| -%>	<!-- For each entry of the subscription table corresponding to current user -->
 	    <tr>
-	    	<td><%= Tracker.find_by_id(j.tracker_id).title %></td>		<!-- Affiche le titre du suivi en cours -->
-			<td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>	<!-- Affiche le titre du flux RSS associ� -->
+	    	<td><%= Tracker.find_by_id(j.tracker_id).title %></td>		<!-- Displays tracker's title -->
+			<td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>	<!-- Display associated RSS feed name and url -->
 			<td align="center"><%= link_to_image 'rss.gif', Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).url %></td>
-			<td align="center"><%= j.frequency %></td>				<!-- Affiche la fr�quence de r�ception -->
-			<td align="center"><%= link_to 'Annuler', url_for(:action => 'destroy', :id => j.id) %></td>	<!-- Annuler l'abonnement (lien sur l'action destroy) -->
+			<td align="center"><%= j.frequency %></td>				<!-- Displays reception frequency -->
+			<td align="center"><%= link_to 'Cancel', url_for(:action => 'destroy', :id => j.id) %></td>	<!-- Cancel subscription (link to action destroy) -->
 	    </tr>
 	<% end -%>
 
