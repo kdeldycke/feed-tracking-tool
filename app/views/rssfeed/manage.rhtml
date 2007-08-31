@@ -1,4 +1,4 @@
-<h2>Gestion des flux RSS</h2><br>
+<h2>Manage RSS feeds</h2><br>
 
 <%= error_messages_for 'rssfeed' %>
 
@@ -8,15 +8,15 @@
 </p><br />
 <% end %>
 
-<p><h4>Flux RSS existant dans la base de donn&eacute;es OVT</h4></p>
+<p><h4>RSS feeds existing in FTT database</h4></p>
 
 <ul id="rss_feeds">
-	<% Rssfeed.find(:all).each do |j| -%>	<!-- Pour chaque entr�e de la table rssfeed -->
+	<% Rssfeed.find(:all).each do |j| -%>	<!-- For each entry of rssfeed table -->
         <li>
-            <h4><%= link_to j.title, j.link %></h4><br />	<!-- Affichage du titre et lien vers le site Web -->
-			<%= j.description %><br />						<!-- Affichage de la description du flux -->
-			<%= link_to_image 'rss.gif', j.url %><br />		<!-- Lien vers le flux RSS -->
-			<%= link_to 'Supprimer', url_for(:action => 'destroy', :id => j.id) %><br />	<!-- Suppression -->
+            <h4><%= link_to j.title, j.link %></h4><br />	<!-- Displays title and link towards website -->
+			<%= j.description %><br />						<!-- Displays feed description -->
+			<%= link_to_image 'rss.gif', j.url %><br />		<!-- Link towards RSS feed -->
+			<%= link_to 'Remove', url_for(:action => 'destroy', :id => j.id) %><br />	<!-- Removes feed -->
         </li>
 	<% end -%>
 </ul>
