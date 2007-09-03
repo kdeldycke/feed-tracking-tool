@@ -57,6 +57,7 @@ end
 # Mime::Type.register "text/richtext", :rtf
 # Mime::Type.register "application/x-mobile", :mobile
 
+
 # Include your application configuration below
 ActiveRecord::Base.pluralize_table_names = false
 
@@ -67,7 +68,25 @@ module ActionMailer
   class Base
     def perform_delivery_msmtp(mail)
       # TODO: generate absolute path below dynamiccaly
-      IO.popen("/usr/bin/msmtp -t -C /home/qdesert/.msmtprc -a provider --", "w") do |sm|
+      # MSMTP config file is located at $HOME/.msmtprc
+      # MSMTP config file content:
+      #   account provider
+      #   host smtp.uperto.com
+      #   auth on
+      #   port 25
+      #   user *******
+      #   password *********
+      #   maildomain uperto.com
+      #   tls on
+      #   tls_starttls on
+      #   tls_certcheck off
+      #   auto_from on
+      #   logfile ~/msmtp.log
+      #
+      #   account default : provider
+      # Shell test command: `msmtp -d test@mydomain.com`
+      # MSMTP documentation: http://msmtp.sourceforge.net/doc/msmtp.html#Configuration-files
+      IO.popen("/usr/bin/msmtp -t -C /root/.msmtprc -a provider --", "w") do |sm|
         sm.puts(mail.encoded.gsub(/\r/, ''))
         sm.flush
       end
