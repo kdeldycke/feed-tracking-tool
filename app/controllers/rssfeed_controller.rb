@@ -24,9 +24,9 @@ class RssfeedController < ApplicationController
     feed = FeedTools::Feed.open(url)  # Creation of an instance of FeedTools and opening of the feed
     # If the parsing return nil fields, the feed is not valid
     unless feed.title.nil? and feed.description.nil? and feed.link.nil?
-      @title = convert_unicode(feed.title)                # We get the title field and convert it to unicode if needed
-      @description = convert_unicode(feed.description)    # We get the description field and convert it to unicode if needed
-      @link = feed.link                                   # We get the link field
+      @title       = feed.title        # We get the title field and convert it to unicode if needed
+      @description = feed.description  # We get the description field and convert it to unicode if needed
+      @link        = feed.link         # We get the link field
       ret = true        # The return value is set to true (the field is valid)
     end
     return ret

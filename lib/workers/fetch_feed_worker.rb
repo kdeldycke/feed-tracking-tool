@@ -13,7 +13,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     ###### Searching of articles in RSS feeds and update of database + Filtering
 
     remove_old  # Removing of articles published before 1 month ago
-    
+
     # For each entry of the rssfeed table
     Rssfeed.find(:all).each do |r|
       rss_articles(r.url)   # Retrieval of all articles contained in the RSS feed
@@ -42,11 +42,11 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
     ######
     redirect_to :controller => 'dashboard', :action => 'display'
-    
+
     # Commit suicide
     self.delete
   end
-  
+
   # Method for finding of all tracked articles
   def find_tracked_articles
     # Filtering of articles by trackers regular expressions and update of relationship table trackedarticles
@@ -74,7 +74,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
       end
     end
   end
-  
+
   # Method for removing articles published before 1 month ago
   def remove_old
     # Removing of articles published before 1 month ago
@@ -106,10 +106,10 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     feed = FeedTools::Feed.open(url)          # Opening url
     @size = feed.items.size                   # Number of items read in the RSS feed
     feed.items.each_with_index do |item, i|   # Retrieving of the RSS feed fields
-      @pubDate[i] = item.time
-      @title[i] = convert_unicode(item.title)
-      @link[i] = item.link
-      @description[i] = convert_unicode(item.description)
+      @pubDate[i]     = item.time
+      @title[i]       = item.title
+      @link[i]        = item.link
+      @description[i] = item.description
     end
   end
 
