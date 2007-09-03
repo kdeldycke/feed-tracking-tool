@@ -40,9 +40,6 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
     find_tracked_articles # Finding of all tracked articles
 
-    ######
-    redirect_to :controller => 'dashboard', :action => 'display'
-
     # Commit suicide
     self.delete
   end
