@@ -60,8 +60,7 @@ end
 # Include your application configuration below
 ActiveRecord::Base.pluralize_table_names = false
 
-
-#msmtp
+# Msmtp is required to send mail via SMTPs protocol
 ActionMailer::Base.delivery_method = :msmtp
 
 module ActionMailer
@@ -80,11 +79,14 @@ module ActionMailer
   end
 end
 
-require 'feed_tools'
 
-FeedTools.configurations[:proxy_address] = "12.34.56.78"
-FeedTools.configurations[:proxy_port] = 8080
-
-#unicode support
+# Force unicode support (default is UFT8 but we force it anyway to feel good... ;) )
 $KCODE = 'u'
 require_dependency 'jcode'
+
+
+# Feed tool import and global config
+require 'feed_tools'
+require 'monkey_patch_feed_tool'  # Monkey patch feed tool to force UTF-8 parsing of some html entities
+FeedTools.configurations[:proxy_address] = "12.34.56.78"
+FeedTools.configurations[:proxy_port] = 8080
