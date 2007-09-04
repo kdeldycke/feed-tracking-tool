@@ -1,8 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
   <title>Feed Tracking Tool</title>
+  <link rel="shortcut icon" href="favicon.png" type="image/png"/>
   <%= stylesheet_link_tag 'style' %>
 </head>
 <body>
@@ -11,8 +12,8 @@
 
   <% unless session[:user].blank? %>
     <ul id="navigation">
-      <li><%= link_to "Manage Source Feeds", :controller => 'rssfeed', :action => 'manage' %></li>
-      <li><%= link_to "Edit Trackers", :controller => 'tracker', :action => 'edit' %></li>
+      <li><%= link_to "Source Feeds", :controller => 'rssfeed', :action => 'manage' %></li>
+      <li><%= link_to "Trackers", :controller => 'tracker', :action => 'edit' %></li>
       <li><%= link_to "Users Statistics", :controller => 'profile', :action => 'users' %></li>
       <li><%= link_to "Trackers Statistics", :controller => 'subscription', :action => 'trackers' %></li>
     </ul>
@@ -21,15 +22,15 @@
   <div id="content">
 
     <% unless session[:user].blank? %>
-        <p align=right>
-      <!-- TODO: get display name from preferences -->
-      Logged in as: <%= session[:user][:display_name] %>
-      | <%= link_to 'Dashboard', :controller => 'dashboard', :action => 'display' %>
-      | <%= link_to 'My Trackers', :controller => 'subscription', :action => 'manage' %>
-      | <%= link_to "Archives", :controller => 'dashboard', :action => 'history' %>
-      | <%= link_to 'Preferences', :controller => 'profile', :action => 'edit' %>
-      | <%= link_to 'Logout', :controller => 'login', :action => 'logout' %>
-          </p>
+      <p align="right">
+        <!-- TODO: get display name from preferences -->
+        Logged in as: <%= session[:user][:display_name] %>
+        | <%= link_to 'Dashboard', :controller => 'dashboard', :action => 'display' %>
+        | <%= link_to 'My Trackers', :controller => 'subscription', :action => 'manage' %>
+        | <%= link_to "Archives", :controller => 'dashboard', :action => 'history' %>
+        | <%= link_to 'Preferences', :controller => 'profile', :action => 'edit' %>
+        | <%= link_to 'Logout', :controller => 'login', :action => 'logout' %>
+      </p>
     <% end %>
 
     <% unless flash[:notice].blank? %>
@@ -45,7 +46,8 @@
   </div>
 
   <div id="footer">
-    <p style="color: #ccc">Feed Tracking Tool v0.8.1<!-- TODO: version number should be an application-wide constant --></p>
+    <p>Feed Tracking Tool v0.8.1<!-- TODO: version number should be an application-wide constant --></p>
+    <p>Anything wrong ? Send insults to <a href="mailto:kdeldycke@uperto.com">kdeldycke@uperto.com</a></p>
   </div>
 
 </body>

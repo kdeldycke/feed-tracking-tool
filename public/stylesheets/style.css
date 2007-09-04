@@ -33,12 +33,21 @@ body {
 }
 
 #warning {
-  border: 5px solid #FF9933;
-  background-color: #FFCC66;
+  border: 5px solid #f93;
+  background-color: #fc6;
   padding: 5px;
   margin: 10px 0;
 }
 
 .fieldWithErrors {
   border: 5px solid #f66;
+}
+
+#footer {
+  color: #ccc;
+  text-align: center;
+}
+
+#footer a {
+  color: #eee;
 }
