@@ -1,14 +1,8 @@
-# Put your code that runs your task inside the do_work method it will be
-# run automatically in a thread. You have access to all of your rails
-# models.  You also get logger and results method inside of this class
-# by default.
 class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
+  #
   def do_work(args)
-    # This method is called in it's own new thread when you
-    # call new worker. args is set to :args
-
-    logger.info "Fetch the feeds !"
+    logger.info "Start feed fetcher"
 
     ###### Searching of articles in RSS feeds and update of database + Filtering
 
@@ -41,6 +35,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     find_tracked_articles # Finding of all tracked articles
 
     # Commit suicide
+    logger.info "Feed fetching ended"
     self.delete
   end
 
@@ -111,4 +106,5 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
   end
 
 end
+
 FetchFeedWorker.register
