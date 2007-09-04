@@ -1,39 +1,33 @@
-<h2>Archives</h2><br>
+<h2>Archives</h2>
 
-<p><h4>Pending and sent articles that match my criterions</h4></p>
-
+<h4>All articles gathered by the trackers you subscribed to during the last month</h4>
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
-
-	<tr>
-	  <th>Date</th>
-	  <th>Article</th>
-	  <th>Description</th>
-	  <th>Tracker</th>
-	  <th>State</th>
-	</tr>
-
-	<!-- For each entry of the subscription table where user_id matches with the current user -->
-    <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |n| %>
-      <!-- For each entry of the trackedarticle (relationship table) table where tracker_id matches with the current user -->
-	  <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
-  		<% v=0 %>
-		<% SentArticleArchive.find(:all).each do |h| %>
-			<% if h.article_id == k.article_id and h.user_id = n.user_id %>
-				<% v=1 %>
-			<% end %>
-		<% end %>
-		<tr>
-	  		<td><%= Article.find_by_id(k.article_id).publication_date %></td>	<!-- Displays article's publication date -->
-	    	<td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>	<!-- Displays title and link towards the article -->
-			<td><%= Article.find_by_id(k.article_id).description %></td>	<!-- Displays article's description -->
-	    	<td align="center"><%= Tracker.find_by_id(k.tracker_id).title %></td>	<!-- Displays tracker's title -->
-			<% if v==1 %>
-				<td align="center">Sent</td>
-			<% else %>
-				<td align="center">Waiting for sending</td>
-			<% end %>
-	    </tr>
+  <tr>
+    <th>Date</th>
+    <th>Article</th>
+    <th>Description</th>
+    <th>Tracker</th>
+    <th>Status</th>
+  </tr>
+  <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |n| %>
+    <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
+      <% v=0 %>
+      <% SentArticleArchive.find(:all).each do |h| %>
+        <% if h.article_id == k.article_id and h.user_id = n.user_id %>
+          <% v=1 %>
+        <% end %>
       <% end %>
-	<% end %>
-
+      <tr>
+        <td><%= Article.find_by_id(k.article_id).publication_date %></td>
+        <td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>
+        <td><%= Article.find_by_id(k.article_id).description %></td>
+        <td align="center"><%= Tracker.find_by_id(k.tracker_id).title %></td>
+        <% if v==1 %>
+          <td align="center">Sent</td>
+        <% else %>
+          <td align="center">Pending</td>
+        <% end %>
+      </tr>
+    <% end %>
+  <% end %>
 </table>
