@@ -1,24 +1,24 @@
-<h2>Manage source feeds</h2>
+<h2>Manage feeds</h2>
 
-<%= error_messages_for 'rssfeed' %>
 
 <h4>Add new feed</h4>
+<%= error_messages_for 'rssfeed' %>
 <% form_for :rssfeed do |f| %>
-<p>
-  URL: <%= f.text_field :url %> <%= submit_tag 'Ajouter'%><br/>
-  Supported formats: RSS, ATOM, RDF, XML, CDF and anything that advertise itself as a feed...
-</p>
+  <p>URL: <%= f.text_field :url %> <%= submit_tag 'Add'%></p>
+  <p>Supported formats: RSS, ATOM, RDF, XML, CDF and anything that advertise itself as a feed...</p>
 <% end %>
 
-<h4>All source feeds</h4>
 
+<h4>All public feeds</h4>
 <ul id="rss_feeds">
-  <% Rssfeed.find(:all).each do |j| -%>   <!-- For each entry of rssfeed table -->
+  <% Rssfeed.find(:all).each do |j| -%>
     <li>
-      <h3><%= link_to j.title, j.link %></h3>   <!-- Displays title and link towards website -->
-      <%= j.description %><br/>   <!-- Displays feed description -->
-      <%= link_to_image 'rss.gif', j.url %><br/>   <!-- Link towards RSS feed -->
-      <%= link_to 'Remove', url_for(:action => 'destroy', :id => j.id) %><br/>   <!-- Removes feed -->
+      <h5><%= link_to j.title, j.link %></h5>
+      <p>
+        <%= j.description %><br/>
+        <%= link_to_image 'rss.gif', j.url %><br/>
+        <%= link_to 'Remove', url_for(:action => 'destroy', :id => j.id) %><br/>
+      </p>
     </li>
   <% end -%>
 </ul>

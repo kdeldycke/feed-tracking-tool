@@ -1,39 +1,31 @@
-<h2>Manage my subscriptions</h2><br>
+<h2>Manage my subscriptions</h2>
 
+
+<h4>Subscribe to a new tracker</h4>
 <%= error_messages_for 'subscription' %>
-
-<% form_for :subscription do |f| %>		<!-- Form to fill in the entry created in the subscription table -->
-<p>
-  Tracker:
-  <%= collection_select(:tracker, :id, @trackers, :id, :title) %>	<!-- List containing existing trackers -->
-</p>
-<p>
-  Mail frequency (days):
-  <%= f.text_field :frequency %>
-</p>
-  <%= submit_tag 'Subscribe'%>
-</p>
+<% form_for :subscription do |f| %>
+  <p>Tracker: <%= collection_select(:tracker, :id, @trackers, :id, :title) %></p>
+  <p>Mail frequency (days): <%= f.text_field :frequency %></p>
+  <p><%= submit_tag 'Subscribe'%></p>
 <% end %>
 
-<p><h4>My Trackers</h4></p>
 
+<h4>My subscriptions</h4>
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
-
-	<tr>
-	  <th>Title</th>
-	  <th>Feed</th>
-	  <th>URL</th>
-	  <th>Frequency (days)</th>
-	  <th>Cancel</th>
-
-	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |j| -%>	<!-- For each entry of the subscription table corresponding to current user -->
-	    <tr>
-	    	<td><%= Tracker.find_by_id(j.tracker_id).title %></td>		<!-- Displays tracker's title -->
-			<td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>	<!-- Display associated RSS feed name and url -->
-			<td align="center"><%= link_to_image 'rss.gif', Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).url %></td>
-			<td align="center"><%= j.frequency %></td>				<!-- Displays reception frequency -->
-			<td align="center"><%= link_to 'Cancel', url_for(:action => 'destroy', :id => j.id) %></td>	<!-- Cancel subscription (link to action destroy) -->
-	    </tr>
-	<% end -%>
-
+  <tr>
+    <th>Title</th>
+    <th>Feed</th>
+    <th>URL</th>
+    <th>Frequency (days)</th>
+    <th>Cancel</th>
+  </tr>
+  <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |j| -%>
+    <tr>
+      <td><%= Tracker.find_by_id(j.tracker_id).title %></td>
+        <td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>
+        <td align="center"><%= link_to_image 'rss.gif', Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).url %></td>
+        <td align="center"><%= j.frequency %></td>
+        <td align="center"><%= link_to 'Cancel', url_for(:action => 'destroy', :id => j.id) %></td>
+    </tr>
+  <% end -%>
 </table>
