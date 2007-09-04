@@ -8,11 +8,14 @@
 </head>
 <body>
 
-  <h1 style="color: #fff">Feed Tracking Tool (aka FTT)</h1>
+  <div id="header">
+    <h1>Feed Tracking Tool</h1>
+    <h2>&emdash; unofficial nickname: FTT, aka "Fait Tout le Travail" &emdash;</h2>
+  </div>
 
   <% unless session[:user].blank? %>
     <ul id="navigation">
-      <li><%= link_to "Source Feeds", :controller => 'rssfeed', :action => 'manage' %></li>
+      <li><%= link_to "Feeds", :controller => 'rssfeed', :action => 'manage' %></li>
       <li><%= link_to "Trackers", :controller => 'tracker', :action => 'edit' %></li>
       <li><%= link_to "Users Statistics", :controller => 'profile', :action => 'users' %></li>
       <li><%= link_to "Trackers Statistics", :controller => 'subscription', :action => 'trackers' %></li>
@@ -23,10 +26,9 @@
 
     <% unless session[:user].blank? %>
       <p align="right">
-        <!-- TODO: get display name from preferences -->
         Logged in as: <%= session[:user][:display_name] %>
         | <%= link_to 'Dashboard', :controller => 'dashboard', :action => 'display' %>
-        | <%= link_to 'My Trackers', :controller => 'subscription', :action => 'manage' %>
+        | <%= link_to 'My Subscriptions', :controller => 'subscription', :action => 'manage' %>
         | <%= link_to "Archives", :controller => 'dashboard', :action => 'history' %>
         | <%= link_to 'Preferences', :controller => 'profile', :action => 'edit' %>
         | <%= link_to 'Logout', :controller => 'login', :action => 'logout' %>
@@ -46,7 +48,7 @@
   </div>
 
   <div id="footer">
-    <p>Feed Tracking Tool v0.8.1<!-- TODO: version number should be an application-wide constant --></p>
+    <p>Feed Tracking Tool v0.8.2<!-- TODO: version number should be an application-wide constant --></p>
     <p>Anything wrong ? Send insults to <a href="mailto:kdeldycke@uperto.com">kdeldycke@uperto.com</a></p>
   </div>
 
