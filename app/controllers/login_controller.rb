@@ -69,7 +69,7 @@ class LoginController < ApplicationController
   def logout
     # Reset session
     session[:user] = nil
-    flash[:notice] = "Deconnecte"
+    flash[:notice] = "Logged out"
     redirect_to :action => "index"
   end
 
