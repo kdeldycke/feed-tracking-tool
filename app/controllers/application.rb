@@ -24,7 +24,9 @@ class ApplicationController < ActionController::Base
   protected
   def authenticate
     unless session[:user]
+      # An anonymous user tried to access a protected page: redirect him to the login screen
       session[:return_to] = @request.request_uri
+      flash[:warning] = "You tried to access a protected page as an anonymous user. Please authenticate, then you'll be redirected to the requested page."
       redirect_to :controller => "login"
       return false
     end
