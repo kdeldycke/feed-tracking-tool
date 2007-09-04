@@ -8,7 +8,7 @@
   <%= collection_select(:tracker, :id, @trackers, :id, :title) %>	<!-- List containing existing trackers -->
 </p>
 <p>
-  Reception frequency (days):
+  Mail frequency (days):
   <%= f.text_field :frequency %>
 </p>
   <%= submit_tag 'Subscribe'%>
@@ -20,8 +20,8 @@
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
 
 	<tr>
-	  <th>Tracker's title</th>
-	  <th>RSS feed</th>
+	  <th>Title</th>
+	  <th>Feed</th>
 	  <th>URL</th>
 	  <th>Frequency (days)</th>
 	  <th>Cancel</th>
