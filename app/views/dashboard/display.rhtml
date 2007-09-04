@@ -1,56 +1,47 @@
 <h2>Dashboard</h2><br>
 
-<p><h4>My trackers</h4></p>
 
+<h4>My subscriptions</h4>
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
-
-	<tr>
-	  <th>Title</th>
-	  <th>Feed</th>
-	  <th>Frequency (days)</th>
-
-	<!-- For each entry of the subscription table where user_id matches with the current user -->
-	<% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |s| -%>
-	    <tr>
-	    	<td><%= Tracker.find_by_id(s.tracker_id).title %></td>		<!-- Displays tracker title -->
-			<td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).url %></td>	<!-- Displays assiocated RSS feed title -->
-			<td align="center"><%= s.frequency %></td>		<!-- Displays reception frequency -->
-	    </tr>
-	<% end -%>
-
+  <tr>
+    <th>Title</th>
+    <th>Feed</th>
+    <th>Frequency (days)</th>
+  </tr>
+  <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |s| -%>
+    <tr>
+      <td><%= Tracker.find_by_id(s.tracker_id).title %></td>
+      <td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).url %></td>
+      <td align="center"><%= s.frequency %></td>
+    </tr>
+  <% end -%>
 </table>
 
 
-<p><h4>Pending articles</h4></p>
-
+<h4>Pending articles</h4>
 <table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
-
-	<tr>
-	  <th>Date</th>
-	  <th>Article</th>
-	  <th>Description</th>
-	  <th>Tracker</th>
-	</tr>
-
-	<!-- For each entry of the subscription table where user_id matches with the current user -->
-    <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |n| %>
-      <!-- For each entry of the trackedarticle (relationship table) table where tracker_id matches with the current user -->
-	  <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
-	  	<% v=0 %>
-		<% SentArticleArchive.find(:all).each do |h| %>
-			<% if h.article_id == k.article_id and h.user_id = n.user_id %>
-				<% v=1 %>
-			<% end %>
-		<% end %>
-		<% if v==0 %>
-		  	<tr>
-		  		<td><%= Article.find_by_id(k.article_id).publication_date %></td>	<!-- Displays article's publication date -->
-		    	<td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>	<!-- Displays title and link towards the article -->
-				<td><%= Article.find_by_id(k.article_id).description %></td>	<!-- Displays article's description -->
-		    	<td align="center"><%= Tracker.find_by_id(k.tracker_id).title %></td>	<!-- Displays tracker's title -->
-		    </tr>
-		<% end %>
+  <tr>
+    <th>Date</th>
+    <th>Article</th>
+    <th>Description</th>
+    <th>Tracker</th>
+  </tr>
+  <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |n| %>
+    <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
+      <% v=0 %>
+      <% SentArticleArchive.find(:all).each do |h| %>
+        <% if h.article_id == k.article_id and h.user_id = n.user_id %>
+          <% v=1 %>
+        <% end %>
       <% end %>
-	<% end %>
-
+      <% if v==0 %>
+        <tr>
+          <td><%= Article.find_by_id(k.article_id).publication_date %></td>
+          <td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>
+          <td><%= Article.find_by_id(k.article_id).description %></td>
+          <td align="center"><%= Tracker.find_by_id(k.tracker_id).title %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  <% end %>
 </table>
