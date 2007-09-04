@@ -44,49 +44,32 @@ Rails::Initializer.run do |config|
   # See Rails::Configuration for more options
 end
 
-# Add new inflection rules using the following format
-# (all these examples are active by default):
-# Inflector.inflections do |inflect|
-#   inflect.plural /^(ox)$/i, '\1en'
-#   inflect.singular /^(ox)en/i, '\1'
-#   inflect.irregular 'person', 'people'
-#   inflect.uncountable %w( fish sheep )
-# end
-
 # Add new mime types for use in respond_to blocks:
 # Mime::Type.register "text/richtext", :rtf
 # Mime::Type.register "application/x-mobile", :mobile
 
 
-# Include your application configuration below
+# Keep table name simple: bypass pluralization
 ActiveRecord::Base.pluralize_table_names = false
 
-# Msmtp is required to send mail via SMTPs protocol
+# We use the external MSMTP tool to send mail via SMTPs protocol: ActionMailer doesn't support TLS (yet ?)
+# You can test MSMTP from a shell terminal with following command: `msmtp -d test@mydomain.com`
+# MSMTP documentation: http://msmtp.sourceforge.net/doc/msmtp.html#Configuration-files
+# XXX Why don't use pure ruby based solution like http://blog.pomozov.info/posts/how-to-send-actionmailer-mails-to-gmailcom.html ?
 ActionMailer::Base.delivery_method = :msmtp
 
+# Setup MSMTP context
+MSMTP_CONF = Pathname.new(File.join(RAILS_ROOT, "config", "msmtp.conf"))  # Use config file located in RoR
+MSMTP_CONF_PATH = MSMTP_CONF.realpath.to_s
+MSMTP_BIN = Pathname.new("/usr/bin/msmtp").realpath.to_s  # TODO: generate path dynamiccaly ?
+MSMTP_CONF.chmod 0600  # Adjust config file permissions
+# TODO: Check here that msmtp is installed and available on the system
+
+# Register MSMTP sending method in Action Mailer
 module ActionMailer
   class Base
     def perform_delivery_msmtp(mail)
-      # TODO: generate absolute path below dynamiccaly
-      # MSMTP config file is located at $HOME/.msmtprc
-      # MSMTP config file content:
-      #   account provider
-      #   host smtp.uperto.com
-      #   auth on
-      #   port 25
-      #   user *******
-      #   password *********
-      #   maildomain uperto.com
-      #   tls on
-      #   tls_starttls on
-      #   tls_certcheck off
-      #   auto_from on
-      #   logfile ~/msmtp.log
-      #
-      #   account default : provider
-      # Shell test command: `msmtp -d test@mydomain.com`
-      # MSMTP documentation: http://msmtp.sourceforge.net/doc/msmtp.html#Configuration-files
-      IO.popen("/usr/bin/msmtp -t -C /root/.msmtprc -a provider --", "w") do |sm|
+      IO.popen("#{MSMTP_BIN} -t -C #{MSMTP_CONF_PATH} -a provider --", "w") do |sm|
         sm.puts(mail.encoded.gsub(/\r/, ''))
         sm.flush
       end
