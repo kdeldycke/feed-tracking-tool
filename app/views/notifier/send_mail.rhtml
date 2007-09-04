@@ -1,22 +1,23 @@
-<p>Hello <%= @username %>, <br/>
-Here you will find articles which could be interesting for you.
+<p>
+  Hello <%= @username %>,<br/>
+  Here you will find articles which could be interesting for you.
 </p>
 
-<p><b>Tracker: </b><%= @tracker %></p>
-<p><b>RSS feed: </b><%= link_to @rssfeed_title, @rssfeed_url %></p>
-<hr />
+<p><b>Tracker:</b> <%= @tracker %></p>
+<p><b>RSS feed:</b> <%= link_to @rssfeed_title, @rssfeed_url %></p>
+<hr/>
 
-<ul id="articles">
-	<% ArticleToSend.find(:all).each do |o| %>
-		<li>
-		    <h4><%= link_to Article.find_by_id(o.article_id).title, Article.find_by_id(o.article_id).url %></h4>	<!-- Displays title and link to the article -->
-			<p><%= Article.find_by_id(o.article_id).publication_date %></p>	<!-- Displays article's publication date -->
-			<p><%= Article.find_by_id(o.article_id).description %><br /></p>	<!-- Displays article's description -->
-			<hr />
-		</li>
-	<% end %>
+<ul>
+  <% ArticleToSend.find(:all).each do |o| %>
+    <li>
+      <h4><%= link_to Article.find_by_id(o.article_id).title, Article.find_by_id(o.article_id).url %></h4>
+      <p><%= Article.find_by_id(o.article_id).publication_date %></p>
+      <p><%= Article.find_by_id(o.article_id).description %></p>
+      <hr/>
+    </li>
+  <% end %>
 </ul>
 
-<p>
-	If you don't want to receive emails from FFT anymore, please modify your preferences in the application.
-</p>
+<p>If you consider this mail a spam, you can suspend mail sending by updating the appropriate option in your <a href="http://192.168.30.89:3000/profile/edit">preferences panel</a>.</p>
+  <!-- TODO: make the previous link dynamic -->
+  <!-- TODO 2: use REST-like URL to stop mail sending with unique URL -->
