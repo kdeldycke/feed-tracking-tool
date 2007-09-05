@@ -1,6 +1,5 @@
 class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
-  #
   def do_work(args)
     logger.info "Start feed fetcher"
 
@@ -47,22 +46,32 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
       # And for each entry of the article table
       Article.find(:all, :conditions => [ "rssfeed_id = ?", t.rssfeed_id ]).each do |e|
         # Checking of the presence of the regex in the title or the description of the article
-        unless e.title.nil? or e.description.nil?
-          if e.title.include? t.regex or e.description.include? t.regex
-            u=0
-            TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
-              if c.tracker_id == t.id and c.article_id == e.id         # If id is the same, the article already exists
-                u=1
-              end
-            end
-            if u == 0     # Article doesn't exist in trackedarticle table
-              # Creation of a new entry in the relationship table
-              tr=TrackedArticle.new(:article_id => e.id,
-                                    :tracker_id => t.id)
-              tr.save
+        
+        inc = false
+        if e.title.include? t.regex
+          inc = true
+        else 
+          unless e.description.nil?
+            if e.description.include? t.regex
+              inc = true
             end
           end
         end
+        if inc == true
+          ex = false
+          TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
+            if c.tracker_id == t.id and c.article_id == e.id         # If id is the same, the article already exists
+              ex = true
+            end
+          end
+          if ex == false     # Article doesn't exist in trackedarticle table
+            # Creation of a new entry in the relationship table
+            tr=TrackedArticle.new(:article_id => e.id,
+                                  :tracker_id => t.id)
+            tr.save
+          end
+        end
+              
       end
     end
   end
