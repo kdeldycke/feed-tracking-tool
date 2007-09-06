@@ -11,7 +11,7 @@
 
 
 <h4>My subscriptions</h4>
-<table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
+<table>
   <tr>
     <th>Title</th>
     <th>Feed</th>
@@ -23,9 +23,9 @@
     <tr>
       <td><%= Tracker.find_by_id(j.tracker_id).title %></td>
         <td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>
-        <td align="center"><%= link_to_image 'rss.gif', Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).url %></td>
-        <td align="center"><%= j.frequency %></td>
-        <td align="center"><%= link_to 'Cancel', url_for(:action => 'destroy', :id => j.id) %></td>
+        <td><%= link_to_image 'rss.gif', Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).url %></td>
+        <td><%= j.frequency %></td>
+        <td><%= link_to 'Cancel', url_for(:action => 'destroy', :id => j.id) %></td>
     </tr>
   <% end -%>
 </table>

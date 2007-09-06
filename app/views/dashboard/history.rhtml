@@ -1,7 +1,7 @@
 <h2>Archives</h2>
 
 <h4>All articles gathered by the trackers you subscribed to during the last month</h4>
-<table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
+<table>
   <tr>
     <th>Date</th>
     <th>Article</th>
@@ -21,11 +21,11 @@
         <td><%= Article.find_by_id(k.article_id).publication_date %></td>
         <td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>
         <td><%= Article.find_by_id(k.article_id).description %></td>
-        <td align="center"><%= Tracker.find_by_id(k.tracker_id).title %></td>
+        <td><%= Tracker.find_by_id(k.tracker_id).title %></td>
         <% if v==1 %>
-          <td align="center">Sent</td>
+          <td>Sent</td>
         <% else %>
-          <td align="center">Pending</td>
+          <td>Pending</td>
         <% end %>
       </tr>
     <% end %>

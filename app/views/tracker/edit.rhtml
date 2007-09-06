@@ -11,7 +11,7 @@
 
 
 <h4>All public trackers</h4>
-<table style="margin-bottom: 2em; margin-left: 2em; width: 95%" border="1">
+<table>
   <tr>
     <th>Title</th>
     <th>Feed</th>
@@ -25,7 +25,7 @@
     <tr>
       <td><%= j.title %></td>
       <td><%= link_to Rssfeed.find_by_id(j.rssfeed_id).title, Rssfeed.find_by_id(j.rssfeed_id).link %></td>
-      <td align="center"><%= link_to_image 'rss.gif', Rssfeed.find_by_id(j.rssfeed_id).url %></td>
+      <td><%= link_to_image 'rss.gif', Rssfeed.find_by_id(j.rssfeed_id).url %></td>
       <td><%= j.regex %></td>
       <td><%=  %></td> <!-- Column 'Tracked', indicates if one ore more users have subscribed to this tracker. Not implemented yet. -->
       <td><%=  %></td> <!-- Column 'Modify', for modifying the tracker. Not implemented yet. -->
