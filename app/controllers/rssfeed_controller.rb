@@ -3,20 +3,31 @@ class RssfeedController < ApplicationController
   def manage
     rssfeed = Rssfeed.new(params[:rssfeed])  # Creation of an entry in rssfeed table
     if request.post?
-      if rssfeed.save       # If the form has been validated
-        if rss(rssfeed.url) == true # If the feed from the url entered in the form can be parsed
-          rssfeed.update_attribute :title , @title               # The title field is updated in the rssfeed table
-          rssfeed.update_attribute :description, @description    # The description field is updated in the rssfeed table
-          rssfeed.update_attribute :link, @link                  # The link field is updated in the rssfeed table
-          flash[:notice] = "Feed added successfully. This feed will be taken into account within the hour. You can track this feed in 'Trackers'."
+      # We check if the entered feed already exists in the database
+      ex = false
+      Rssfeed.find(:all).each do |r|
+        if rssfeed.url == r.url
+          ex = true
+        end
+      end
+      if ex == false  # If the feed doesn't exist in the database
+        if rssfeed.save       # If the form has been validated
+          if rss(rssfeed.url) == true # If the feed from the url entered in the form can be parsed
+            rssfeed.update_attribute :title , @title               # The title field is updated in the rssfeed table
+            rssfeed.update_attribute :description, @description    # The description field is updated in the rssfeed table
+            rssfeed.update_attribute :link, @link                  # The link field is updated in the rssfeed table
+            flash[:notice] = "Feed added successfully. This feed will be taken into account within the hour. You can track this feed in 'Trackers'."
+          else
+            flash[:warning] = "Invalid URL!"
+            rssfeed.destroy
+            rssfeed.save
+          end
         else
           flash[:warning] = "Invalid URL!"
-          rssfeed.destroy
-          rssfeed.save
+          @rssfeed = rssfeed
         end
       else
-        flash[:warning] = "Invalid URL!"
-        @rssfeed = rssfeed
+        flash[:warning] = "This feed already exists in FTT public feeds."
       end
       redirect_to :controller => 'rssfeed', :action => 'manage' # Refreshing page
     end
