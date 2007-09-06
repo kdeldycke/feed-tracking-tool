@@ -12,13 +12,41 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
       rss_articles(r.url)   # Retrieval of all articles contained in the RSS feed
       i=0
       while i < @size       # Covering of all items read in the RSS feed
-        t=0
+        ex = false
         Article.find(:all).each do |a|    # For each entry of the article table
-          if a.title == @title[i]         # If the title is the same, the article already exists
-            t=1
+          if a.url == @link[i]                      # If the url is the same, the article already exists
+            if a.title == @title[i]                 # We check the title for an eventual update
+              if @description[i].nil? # Some articles are referred in several feeds which don't have description -> we don't want to lose content
+                ex = true
+              else
+                if a.description == @description[i]   # Idem for description
+                  ex = true
+                else            # If description is different, we destroy the article (then recreate it)
+                  a.destroy
+                  a.save
+                  # The removed article has to be removed from this table as well
+                  TrackedArticle.find(:all).each do |t|
+                    if t.article_id == a.id
+                      t.destroy
+                      t.save
+                    end
+                  end
+                end
+              end
+            else              # If title is different, we destroy the article (then recreate it)
+              a.destroy
+              a.save
+              # The removed article has to be removed from this table as well
+              TrackedArticle.find(:all).each do |t|
+                if t.article_id == a.id
+                  t.destroy
+                  t.save
+                end
+              end
+            end
           end
         end
-        if t == 0     # The article doesn't exist in the article table
+        if ex == false     # The article doesn't exist in the article table
           # Creation of a new entry in the article table
           art=Article.new(:title => @title[i],
                           :url => @link[i],
@@ -82,7 +110,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     # For each entry of the article table
     Article.find(:all).each do |m|
       unless m.publication_date.nil?  # Some articles don't have any publication date
-        if m.publication_date < (Time.now - 5.day)  # If the pub-date is older than 1 month ago
+        if m.publication_date < (Time.now - 31.day)  # If the pub-date is older than 1 month ago
           m.destroy                                   # Removing
           m.save
           # The removed article has to be removed from this table as well
