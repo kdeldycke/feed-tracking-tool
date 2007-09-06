@@ -11,7 +11,7 @@
 
 <h4>All public feeds</h4>
 <ul id="rss_feeds">
-  <% Rssfeed.find(:all).each do |j| -%>
+  <% Rssfeed.find(:all, :order => 'title').each do |j| -%>
     <li>
       <h5><%= link_to j.title, j.link %></h5>
       <p>
