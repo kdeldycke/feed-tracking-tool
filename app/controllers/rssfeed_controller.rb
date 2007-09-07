@@ -1,5 +1,7 @@
 class RssfeedController < ApplicationController
 
+  # TODO: Rename table 'rssfeed' in 'feed' (or a more generic name)
+
   def manage
     rssfeed = Rssfeed.new(params[:rssfeed])  # Creation of an entry in rssfeed table
     if request.post?
