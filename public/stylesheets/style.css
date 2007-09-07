@@ -96,3 +96,15 @@ tr, td, th {
 #footer a {
   color: #eee;
 }
+
+
+/* Feed list style */
+#feedlist h5 span.actions {
+  font-size: .8em;
+  font-weight: normal;
+}
+
+#feedlist li {
+  border-bottom: 1px dotted #ccc;
+  margin-bottom: 1em;
+}
