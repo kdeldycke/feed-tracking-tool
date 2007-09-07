@@ -27,8 +27,8 @@
       <td><%= link_to Rssfeed.find_by_id(j.rssfeed_id).title, Rssfeed.find_by_id(j.rssfeed_id).link %></td>
       <td><%= link_to_image 'rss.gif', Rssfeed.find_by_id(j.rssfeed_id).url %></td>
       <td><%= j.regex %></td>
-      <td><%=  %></td> <!-- Column 'Tracked', indicates if one ore more users have subscribed to this tracker. Not implemented yet. -->
-      <td><%=  %></td> <!-- Column 'Modify', for modifying the tracker. Not implemented yet. -->
+      <td><%=  %></td> <!-- Not implemented yet. Column 'Tracked', indicates if one ore more users have subscribed to this tracker. -->
+      <td><%=  %></td> <!-- NOT IMPLEMENTED YET. Column 'Modify', for modifying the tracker. -->
       <td><%= link_to 'Remove', url_for(:action => 'destroy', :id => j.id) %></td>
     </tr>
   <% end -%>

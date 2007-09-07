@@ -1,5 +1,7 @@
 class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
+  # TODO: Voir fichier article.rb
+
   def do_work(args)
     logger.info "Start feed fetcher"
 

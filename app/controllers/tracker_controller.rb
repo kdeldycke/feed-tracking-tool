@@ -1,3 +1,8 @@
+# TODO: Private trackers
+#       Possibility to select several feeds for a tracker
+#       Possibility to modify (edit) a tracker
+#       Regular expressions management (now only keywords are handled)
+
 class TrackerController < ApplicationController
   
   def edit
@@ -29,3 +34,5 @@ class TrackerController < ApplicationController
   end
   
 end
+
+# TODO: User must be able to modify a tracker

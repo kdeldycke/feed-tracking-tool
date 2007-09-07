@@ -1,3 +1,6 @@
+# TODO: Frequency could be counted in hours instead of days (or just more flexible)
+#       -> possibility to subscribe with an option like 'receive a mail when new articles available'
+
 class SubscriptionController < ApplicationController
 
   def manage
