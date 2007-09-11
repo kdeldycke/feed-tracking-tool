@@ -6,21 +6,26 @@
 <table>
   <thead>
     <tr>
-      <th>Title</th>
-      <th>Feed</th>
+      <th>Tracker title</th>
+      <th>Source feed</th>
       <th>Frequency (days)</th>
+      <th>Cancel</th>
     </tr>
   </thead>
   <tbody>
     <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |s| -%>
       <tr>
-        <td><%= Tracker.find_by_id(s.tracker_id).title %></td>
-        <td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).url %></td>
+        <td class="title"><%= Tracker.find_by_id(s.tracker_id).title %></td>
+        <td><%= link_to_image 'feed_icon.png', Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).url %> <%= link_to Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).link %></td>
         <td><%= s.frequency %></td>
+        <td><%= link_to 'Cancel', url_for(:action => 'destroy', :id => s.id) %></td>
       </tr>
     <% end -%>
   </tbody>
 </table>
+<div class="button">
+  <a href="<%= url_for(:controller => 'subscription', :action => 'manage') %>"><%= image_tag "add.png" %> Subscribe to a Tracker</a>
+</div>
 
 
 <h4>Pending articles</h4>
