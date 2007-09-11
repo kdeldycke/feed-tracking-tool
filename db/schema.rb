@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 23) do
+ActiveRecord::Schema.define(:version => 24) do
 
   create_table "article", :force => true do |t|
     t.column "title",            :string
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(:version => 23) do
     t.column "regex",      :string
     t.column "title",      :string
     t.column "rssfeed_id", :integer
+    t.column "visibility", :string
   end
 
 end
