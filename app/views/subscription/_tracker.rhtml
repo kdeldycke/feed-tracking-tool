@@ -2,6 +2,7 @@
 
 <h4><%= Tracker.find_by_id(tracker.tracker_id).title %></h4>
 <ul>
+  <!-- TODO: add condition to not display private feed you're not allowed to see -->
   <% Subscription.find(:all, :conditions => [ "tracker_id = ?", tracker.tracker_id ]).each do |j| -%>
     <li><%= Profile.find_by_user_id(j.user_id).display_name %></li>
   <% end -%>
