@@ -18,7 +18,7 @@ class RssfeedController < ApplicationController
             rssfeed.update_attribute :title , @title               # The title field is updated in the rssfeed table
             rssfeed.update_attribute :description, @description    # The description field is updated in the rssfeed table
             rssfeed.update_attribute :link, @link                  # The link field is updated in the rssfeed table
-            flash[:notice] = "Feed added successfully. This feed will be taken into account within the hour. You can track this feed in 'Trackers'."
+            flash[:notice] = "New feed added. Articles from this feed will be fetched within the hour. You can track this feed in 'Trackers' panel."
           else
             flash[:warning] = "Invalid URL!"
             rssfeed.destroy
