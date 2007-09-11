@@ -24,7 +24,7 @@
       <!--th>Edit</th-->
       <th>Delete</th>
     </tr>
-  <thead>
+  </thead>
   <tbody>
     <% Tracker.find(:all, :conditions => "profile_id is NULL or profile_id = " + session[:user][:profile_id].to_s).each do |j| -%>
       <tr>
