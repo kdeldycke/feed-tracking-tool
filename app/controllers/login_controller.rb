@@ -49,6 +49,7 @@ class LoginController < ApplicationController
       # Register user in the session
       session[:user] = {:login        => login,
                         :id           => dn,
+                        :profile_id   => Profile.find_by_user_id(dn).id,
                         :display_name => Profile.find_by_user_id(dn).display_name
                        }
 

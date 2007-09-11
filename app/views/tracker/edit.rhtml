@@ -6,7 +6,7 @@
   <p>Title: <%= f.text_field :title %></p>
   <p>Source feed: <%= collection_select(:rssfeed, :id, @feeds, :id, :title) %></p>
   <p>Filter: <%= f.text_field :regex %> (keywords or regular expression)</p> <!-- TODO: support regexp -->
-  <p>Visibility: <%=  select :tracker, :visibility, {"Public"=>"", "Private"=>session[:user][:id]}, {:include_blank => false} %></p>
+  <p>Visibility: <%=  select :t, :visibility, {"Public"=>"public", "Private"=>"private"}, {:include_blank => false} %></p>
   <p><%= submit_tag 'Add'%></p>
 <% end %>
 
