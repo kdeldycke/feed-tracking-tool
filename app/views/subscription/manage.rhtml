@@ -4,7 +4,7 @@
 <h4>Subscribe to a new tracker</h4>
 <%= error_messages_for 'subscription' %>
 <% form_for :subscription do |f| %>
-  <p>Tracker: <%= collection_select(:tracker, :id, @trackers, :id, :title) %></p>
+  <p>Tracker: <%= collection_select(:tracker, :id, Tracker.find(:all, :conditions => "profile_id is NULL or profile_id = " + session[:user][:profile_id].to_s), :id, :title) %></p>
   <p>Mail frequency (days): <%= f.text_field :frequency %></p>
   <p><%= submit_tag 'Subscribe'%></p>
 <% end %>
