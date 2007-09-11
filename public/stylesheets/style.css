@@ -35,6 +35,10 @@ td, th {
   padding: .2em;
 }
 
+td a img {
+  vertical-align: middle;
+}
+
 table thead {
   border-bottom: 2px #95b3e8 solid;
 }
@@ -47,9 +51,26 @@ table tbody tr {
   border-bottom: 1px #ccc dotted;
 }
 
- table tbody tr:hover {
+table tbody tr:hover {
   background: #e6f0f9;
 }
+
+table .title {
+  font-weight: bold;
+}
+
+table td.public {
+  color: #9bd299;
+}
+
+table td.private {
+  color: #ffa757;
+}
+
+table td.code {
+  font-family: monospace;
+}
+
 
 #header {
   text-align: center;

@@ -7,33 +7,34 @@
   <p>Source feed: <%= collection_select(:rssfeed, :id, @feeds, :id, :title) %></p>
   <p>Filter: <%= f.text_field :regex %> (keywords or regular expression)</p> <!-- TODO: support regexp -->
   <p>Visibility: <%=  select :t, :visibility, {"Public"=>"public", "Private"=>"private"}, {:include_blank => false} %></p>
+  <!-- TODO: auto subscribe the user to the tracker he added -->
   <p><%= submit_tag 'Add'%></p>
 <% end %>
 
 
-<h4>All public trackers</h4>
+<h4>All trackers</h4>
 <table>
   <thead>
     <tr>
       <th>Title</th>
-      <th>Feed</th>
-      <th>URL</th>
+      <th>Visibility</th>
+      <th>Source Feed</th>
       <th>Filter</th>
-      <th>Tracked</th>
-      <th>Modify</th>
-      <th>Remove</th>
+      <th>Subscriptions</th>
+      <!--th>Edit</th-->
+      <th>Delete</th>
     </tr>
   <thead>
   <tbody>
-    <% Tracker.find(:all).each do |j| -%>
+    <% Tracker.find(:all, :conditions => "profile_id is NULL or profile_id = " + session[:user][:profile_id].to_s).each do |j| -%>
       <tr>
-        <td><%= j.title %></td>
-        <td><%= link_to Rssfeed.find_by_id(j.rssfeed_id).title, Rssfeed.find_by_id(j.rssfeed_id).link %></td>
-        <td><%= link_to_image 'rss.gif', Rssfeed.find_by_id(j.rssfeed_id).url %></td>
-        <td><%= j.regex %></td>
-        <td><%=  %></td> <!-- Not implemented yet. Column 'Tracked', indicates if one ore more users have subscribed to this tracker. -->
-        <td><%=  %></td> <!-- NOT IMPLEMENTED YET. Column 'Modify', for modifying the tracker. -->
-        <td><%= link_to 'Remove', url_for(:action => 'destroy', :id => j.id) %></td>
+        <td class="title"><%= j.title %></td>
+        <td class="<%= j.profile_id and "private" or "public" %>"><%= j.profile_id and "Private" or "Public" %></td>
+        <td><%= link_to_image 'feed_icon.png', Rssfeed.find_by_id(j.rssfeed_id).url %> <%= link_to Rssfeed.find_by_id(j.rssfeed_id).title, Rssfeed.find_by_id(j.rssfeed_id).link %></td>
+        <td class="code"><%= j.regex %></td>
+        <td><%= j.subscriptions_count > 0 and j.subscriptions_count.to_s or '' %></td>
+        <!--td><%=  %></td--> <!-- NOT IMPLEMENTED YET. Column 'Modify', for modifying the tracker. -->
+        <td><%= link_to_image 'editdelete.png', url_for(:action => 'destroy', :id => j.id) %></td>
       </tr>
     <% end -%>
   </tbody>
