@@ -55,7 +55,7 @@ class RssfeedController < ApplicationController
 
     d = r.trackers_count        # We count the number of trackers associated to this feed
     if d>0                      # If this number is positive, we can't remove the RSS feed
-      flash[:warning] = 'Feed used in one ore more trackers : Removing it is forbidden until tracker(s) exists.'
+      flash[:warning] = "Some trackers are still using the feed as content source: you can't remove it."
     else
       r.destroy                     # Destroying the feed
       r.save
