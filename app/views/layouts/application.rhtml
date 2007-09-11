@@ -28,7 +28,6 @@
       <ul id="usertoolbar">
         <li>Logged in as: <%= session[:user][:display_name] %></li>
         <li><%= link_to 'Dashboard', :controller => 'dashboard', :action => 'display' %></li>
-        <li><%= link_to 'My Subscriptions', :controller => 'subscription', :action => 'manage' %></li>
         <li><%= link_to "Archives", :controller => 'dashboard', :action => 'history' %></li>
         <li><%= link_to 'Preferences', :controller => 'profile', :action => 'edit' %></li>
         <li><%= link_to 'Logout', :controller => 'login', :action => 'logout' %></li>
