@@ -10,11 +10,21 @@
 
 
 <h4>All public feeds</h4>
-<ul id="feedlist">
-  <% Rssfeed.find(:all, :order => 'title').each do |j| -%>
-    <li>
-      <h5><%= link_to j.title, j.link %><span class="actions"> | <%= link_to_image 'rss.gif', j.url %> | <%= link_to 'Remove', url_for(:action => 'destroy', :id => j.id) %></span></h5>
-      <p><%= j.description %></p>
-    </li>
-  <% end -%>
-</ul>
+<table>
+  <thead>
+    <tr>
+      <th>Feed</th>
+      <th>Description</th>
+      <th>Delete</th>
+    </tr>
+  <thead>
+  <tbody>
+    <% Rssfeed.find(:all, :order => 'title').each do |j| -%>
+      <tr>
+        <td class="title"><%= link_to_image 'feed_icon.png', j.url %> <%= link_to j.title, j.link %></td>
+        <td><%=j.description %></td>
+        <td><%= link_to_image 'editdelete.png', url_for(:action => 'destroy', :id => j.id) %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
