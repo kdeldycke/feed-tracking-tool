@@ -20,17 +20,35 @@ h4 {font-size: 1.4em; margin: .4em 0;}
 h5 {font-size: 1.2em; margin: .2em 0;}
 h6 {font-size: 1.1em; margin: .1em 0;}
 
+a:link, a:visited {text-decoration: none;}
+a:active, a:hover {text-decoration: underline;}
+/*a:link {color: }
+a:visited {color: }
+a:hover {color: }*/
+
 table {
   border-collapse: collapse;  /* Patch Eric Meyer's reset style CSS */
   width: 99%;
 }
 
-table, tr, td, th {
- border: 1px solid #999;
+td, th {
+  padding: .2em;
 }
 
-tr, td, th {
-  padding: .2em;
+table thead {
+  border-bottom: 2px #95b3e8 solid;
+}
+
+table thead th {
+  font-weight: bold;
+}
+
+table tbody tr {
+  border-bottom: 1px #ccc dotted;
+}
+
+ table tbody tr:hover {
+  background: #e6f0f9;
 }
 
 #header {
@@ -39,6 +57,7 @@ tr, td, th {
 }
 #header h1 {
   color: #fff;
+  text-shadow: #999 0 0 3px;
 }
 
 #content {
@@ -91,6 +110,8 @@ tr, td, th {
 #footer {
   color: #ccc;
   text-align: center;
+  margin: 1em;
+  font-size: .8em;
 }
 
 #footer a {

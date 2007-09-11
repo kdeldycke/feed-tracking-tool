@@ -4,45 +4,53 @@
 
 <h4>My subscriptions</h4>
 <table>
-  <tr>
-    <th>Title</th>
-    <th>Feed</th>
-    <th>Frequency (days)</th>
-  </tr>
-  <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |s| -%>
+  <thead>
     <tr>
-      <td><%= Tracker.find_by_id(s.tracker_id).title %></td>
-      <td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).url %></td>
-      <td><%= s.frequency %></td>
+      <th>Title</th>
+      <th>Feed</th>
+      <th>Frequency (days)</th>
     </tr>
-  <% end -%>
+  </thead>
+  <tbody>
+    <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |s| -%>
+      <tr>
+        <td><%= Tracker.find_by_id(s.tracker_id).title %></td>
+        <td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).url %></td>
+        <td><%= s.frequency %></td>
+      </tr>
+    <% end -%>
+  </tbody>
 </table>
 
 
 <h4>Pending articles</h4>
 <table>
-  <tr>
-    <th>Date</th>
-    <th>Article</th>
-    <th>Description</th>
-    <th>Tracker</th>
-  </tr>
-  <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |n| %>
-    <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
-      <% v=0 %>
-      <% SentArticleArchive.find(:all).each do |h| %>
-        <% if h.article_id == k.article_id and h.user_id = n.user_id %>
-          <% v=1 %>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Article</th>
+      <th>Description</th>
+      <th>Tracker</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |n| %>
+      <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
+        <% v=0 %>
+        <% SentArticleArchive.find(:all).each do |h| %>
+          <% if h.article_id == k.article_id and h.user_id = n.user_id %>
+            <% v=1 %>
+          <% end %>
+        <% end %>
+        <% if v==0 %>
+          <tr>
+            <td><%= Article.find_by_id(k.article_id).publication_date %></td>
+            <td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>
+            <td><%= Article.find_by_id(k.article_id).description %></td>
+            <td><%= Tracker.find_by_id(k.tracker_id).title %></td>
+          </tr>
         <% end %>
       <% end %>
-      <% if v==0 %>
-        <tr>
-          <td><%= Article.find_by_id(k.article_id).publication_date %></td>
-          <td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>
-          <td><%= Article.find_by_id(k.article_id).description %></td>
-          <td><%= Tracker.find_by_id(k.tracker_id).title %></td>
-        </tr>
-      <% end %>
     <% end %>
-  <% end %>
+  </tbody>
 </table>

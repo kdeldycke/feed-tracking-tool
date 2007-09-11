@@ -12,20 +12,24 @@
 
 <h4>My subscriptions</h4>
 <table>
-  <tr>
-    <th>Title</th>
-    <th>Feed</th>
-    <th>URL</th>
-    <th>Frequency (days)</th>
-    <th>Cancel</th>
-  </tr>
-  <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |j| -%>
+  <thead>
     <tr>
-      <td><%= Tracker.find_by_id(j.tracker_id).title %></td>
-        <td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>
-        <td><%= link_to_image 'rss.gif', Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).url %></td>
-        <td><%= j.frequency %></td>
-        <td><%= link_to 'Cancel', url_for(:action => 'destroy', :id => j.id) %></td>
+      <th>Title</th>
+      <th>Feed</th>
+      <th>URL</th>
+      <th>Frequency (days)</th>
+      <th>Cancel</th>
     </tr>
-  <% end -%>
+  </thead>
+  <tbody>
+    <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |j| -%>
+      <tr>
+        <td><%= Tracker.find_by_id(j.tracker_id).title %></td>
+          <td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>
+          <td><%= link_to_image 'rss.gif', Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).url %></td>
+          <td><%= j.frequency %></td>
+          <td><%= link_to 'Cancel', url_for(:action => 'destroy', :id => j.id) %></td>
+      </tr>
+    <% end -%>
+  </tbody>
 </table>
