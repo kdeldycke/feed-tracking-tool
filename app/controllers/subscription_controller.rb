@@ -14,17 +14,17 @@ class SubscriptionController < ApplicationController
       @subscription.update_attribute :user_id, session[:user][:id]
       @subscription.update_attribute :date_lastmail, Time.now-@subscription.frequency.day
       flash[:notice] = 'Subscription added successfully. You will receive your first email within the hour (unless you deactivate email notification in your profile).'
-      redirect_to :controller => 'subscription', :action => 'manage'    # Refreshing page
+      redirect_to :controller => 'dashboard', :action => 'display' # Redirect to dashboard
     end
   end
 
   # Deleting subscription
   def destroy
-    s=Subscription.find(params[:id])   # Searching in database for the subscription to remove
+    s = Subscription.find(params[:id])   # Searching in database for the subscription to remove
     s.destroy                     # Destroying the subscription
     s.save
-    flash[:notice] = 'Subscription cancelled'
-    redirect_to :controller => 'subscription', :action => 'manage'     # Refreshing page
+    flash[:notice] = 'Subscription cancelled.'
+    redirect_to :controller => 'dashboard', :action => 'display' # Redirect to dashboard
   end
 
 
