@@ -1,35 +1,8 @@
-<h2>Manage my subscriptions</h2>
+<h2>Subscribe to a tracker</h2>
 
-
-<h4>Subscribe to a new tracker</h4>
 <%= error_messages_for 'subscription' %>
 <% form_for :subscription do |f| %>
   <p>Tracker: <%= collection_select(:tracker, :id, Tracker.find(:all, :conditions => "profile_id is NULL or profile_id = " + session[:user][:profile_id].to_s), :id, :title) %></p>
   <p>Mail frequency (days): <%= f.text_field :frequency %></p>
   <p><%= submit_tag 'Subscribe'%></p>
 <% end %>
-
-
-<h4>My subscriptions</h4>
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Feed</th>
-      <th>URL</th>
-      <th>Frequency (days)</th>
-      <th>Cancel</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |j| -%>
-      <tr>
-        <td><%= Tracker.find_by_id(j.tracker_id).title %></td>
-          <td><%= link_to Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).link %></td>
-          <td><%= link_to_image 'rss.gif', Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).url %></td>
-          <td><%= j.frequency %></td>
-          <td><%= link_to 'Cancel', url_for(:action => 'destroy', :id => j.id) %></td>
-      </tr>
-    <% end -%>
-  </tbody>
-</table>
