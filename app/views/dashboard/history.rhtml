@@ -1,38 +1,30 @@
 <h2>Archives</h2>
 
-<!-- TODO: Sort articles by pending/sent then by date (or tracker) -->
+<!-- TODO: Sort articles by publication date -->
+<!-- TODO: Allow sorting by different criterion -->
 <!-- 	   A paging system would be good (e.g. 15 articles by page) -->
 
 <h4>All articles gathered by the trackers you subscribed to during the last month</h4>
 <table>
   <thead>
     <tr>
-      <th>Date</th>
       <th>Article</th>
       <th>Description</th>
+      <th>Publication date</th>
       <th>Tracker</th>
       <th>Status</th>
     </tr>
-  <thead>
+  </thead>
   <tbody>
-    <% Subscription.find(:all, :conditions => [ "user_id = ?", session[:user][:id] ]).each do |n| %>
-      <% TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", n.tracker_id ]).each do |k| %>
-        <% v=0 %>
-        <% SentArticleArchive.find(:all).each do |h| %>
-          <% if h.article_id == k.article_id and h.user_id = n.user_id %>
-            <% v=1 %>
-          <% end %>
-        <% end %>
+    <% Subscription.find(:all, :conditions => {:profile_id => session[:user][:profile_id]}).each do |n| %>
+      <% TrackedArticle.find(:all, :conditions => {:tracker_id => n.tracker_id}).each do |k| %>
+        <% SentArticleArchive.find(:all, :conditions => {:article_id => k.article_id, :profile_id => n.profile_id}).blank? and (v=false) or (v=true) %>
         <tr>
-          <td><%= Article.find_by_id(k.article_id).publication_date %></td>
           <td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>
           <td><%= Article.find_by_id(k.article_id).description %></td>
+          <td><%= Article.find_by_id(k.article_id).publication_date.strftime("%d %b %Y, %H:%M") %></td>
           <td><%= Tracker.find_by_id(k.tracker_id).title %></td>
-          <% if v==1 %>
-            <td>Sent</td>
-          <% else %>
-            <td>Pending</td>
-          <% end %>
+          <td class="<%= v and 'sent' or 'pending'%>"><%= v and 'Sent' or 'Pending'%></td>
         </tr>
       <% end %>
     <% end %>
