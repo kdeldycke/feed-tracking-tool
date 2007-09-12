@@ -1,57 +1,56 @@
+# TODO: do not use worker but task to embedded this code. This will allow us to remove the "suicide" code.
+
 class BuildAndSendMailWorker < BackgrounDRb::Worker::RailsBase
 
   # This method aggregate articles of a given subscription ("build") and then send a mail.
   def do_work(args)
-    logger.info "Start mail building and sending"
+    logger.info "Start mail sending"
 
-    ###### Emails sending
-
-    # For each entry of subscription table
+    # Send one mail per subscription
     Subscription.find(:all).each do |s|
-      # We send the mail if the period between last mail and current time is longer than the frequency
-      if ((Time.now - s.date_lastmail)/(3600*24)) >= s.frequency
-        # For each tracked article of the current subscription
-        TrackedArticle.find(:all, :conditions => [ "tracker_id = ?", s.tracker_id ]).each do |d|
-          ar=0
-          # We check if the article is already sent (with sent_article_archive table)
-          SentArticleArchive.find(:all).each do |h|
-            if h.article_id == d.article_id and h.user_id == s.user_id
-              ar=1
-            end
-          end
-          if ar == 0 # If it is not sent already
-            # We create a new entry in the article_to_send table
-            tosend = ArticleToSend.new(:article_id => d.article_id,
-                                       :tracker_id => d.tracker_id,
-                                       :user_id => s.user_id)
-            tosend.save
+
+      # Take care of this subscription only if the time between the last mail and now is greater (or equal) than the frequency
+      if ((Time.now - s.date_lastmail) / (3600*24)) >= s.frequency
+        logger.info "Last mail sent more than #{s.frequency} days ago for subscription ##{s.id}"
+
+        # Build the list of articles to send
+        TrackedArticle.find(:all, :conditions => {:tracker_id => s.tracker_id}).each do |d|
+          # Add article to the pending list if not already sent
+          if SentArticleArchive.find(:all, :conditions => {:article_id => d.article_id, :profile_id => s.profile_id}).blank?
+            article_to_send = ArticleToSend.new(:article_id => d.article_id,
+                                                :tracker_id => d.tracker_id,
+                                                :profile_id => s.profile_id)
+            article_to_send.save
+            logger.info "Article ##{d.article_id} marked as pending by tracker ##{d.tracker_id} for user ##{s.profile_id}."
           end
         end
-      end
-      # We check if the current user has articles waiting for sending
-      unless ArticleToSend.find(:all, :conditions => [ "user_id = ?", s.user_id ]).empty?
-        # We check if the current user is registered in the profile table
-        Profile.find(:all).each do |p|
-          if p.user_id == s.user_id
-            Notifier.deliver_send_mail(p.email) # We send the email (using the method send_mail in the mailer notifier.rb)
-            # We destroy the articles sent in the article_to_send table
-            ArticleToSend.find(:all, :conditions => [ "user_id = ?", s.user_id ]).each do |w|
+
+        # If at least one article is pending, send an email
+        unless ArticleToSend.find(:all, :conditions => {:profile_id => s.profile_id}).empty?
+          # Check if the current user is registered in the profile table
+          p = Profile.find(s.profile_id)
+          if not p.blank?
+            Notifier.deliver_send_mail(p.email) # Send the mail
+            # Delete article from the article_to_send table
+            ArticleToSend.find(:all, :conditions => {:profile_id => s.profile_id}).each do |w|
               w.destroy
               w.save
-              # And we put the sent article in the sent_article_archive table
+              # Move article from the queue table to the archive table
               sa = SentArticleArchive.new(:article_id => w.article_id,
                                           :sending_date => Time.now,
-                                          :user_id => w.user_id)
+                                          :profile_id => w.profile_id)
               sa.save
             end
           end
-        end
-      end
-      # The date_lastmail has to be updated
-      s.update_attribute :date_lastmail, s.date_lastmail+s.frequency.day
-    end
 
-    ######
+          # Update the last mail date here: this will force FTT to send a mail as soon as possible if no articles match after the frenquency is reached.
+          # Use the "last mail + frenquency" date instead of "now" to keep the mail to be sent at the same moment of the day (= same HH:MM:ss)
+          s.update_attribute :date_lastmail, s.date_lastmail+s.frequency.day
+        end
+
+      end
+
+    end
 
     # Commit suicide
     logger.info "Mail sending ended"
