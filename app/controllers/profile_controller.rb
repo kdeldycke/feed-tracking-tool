@@ -3,11 +3,11 @@ class ProfileController < ApplicationController
   def edit
     # Get the currrent user profile or create a new one if doesn't exist
     # XXX Duplicate code with the one which exist in the login_controller !
-    user_id = session[:user][:id]
-    profile = Profile.find_by_user_id(user_id)
+    user_id = session[:user][:profile_id]
+    profile = Profile.find(user_id)
     if not profile:
       profile = Profile.new
-      profile.user_id = user_id
+      profile.user_id = session[:user][:id]
     end
 
     # Was the form submitted ?
@@ -38,7 +38,7 @@ class ProfileController < ApplicationController
 
 
   def users
-    @users = Subscription.find(:all, :select => 'DISTINCT user_id')  # Gets list of users in subscription table
+    @users = Subscription.find(:all, :select => 'DISTINCT profile_id')  # Gets list of users in subscription table
   end
 
 end

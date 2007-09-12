@@ -11,9 +11,9 @@ class SubscriptionController < ApplicationController
     if request.post? and @subscription.save
       @selected_tracker = params[:tracker][:id]                         # We get the selected tracker
       @subscription.update_attribute :tracker_id, @selected_tracker     # Update of tracker_id field in tracker table
-      @subscription.update_attribute :user_id, session[:user][:id]
-      @subscription.update_attribute :date_lastmail, Time.now-@subscription.frequency.day
-      flash[:notice] = 'Subscription added successfully. You will receive your first email within the hour (unless you deactivate email notification in your profile).'
+      @subscription.update_attribute :profile_id, session[:user][:profile_id]
+      @subscription.update_attribute :date_lastmail, (Time.now - @subscription.frequency.day)
+      flash[:notice] = "Subscription added. You will receive your first email within the hour (unless you've desactivated email notification in your preferences or no articles match tracker's filter yet)."
       redirect_to :controller => 'dashboard', :action => 'display' # Redirect to dashboard
     end
   end
