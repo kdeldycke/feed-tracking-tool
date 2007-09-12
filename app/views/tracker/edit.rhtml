@@ -5,9 +5,9 @@
 <% form_for :tracker do |f| %>
   <p>Title: <%= f.text_field :title %></p>
   <p>Source feed: <%= collection_select(:rssfeed, :id, @feeds, :id, :title) %></p>
-  <p>Filter: <%= f.text_field :regex %> (keywords or regular expression)</p> <!-- TODO: support regexp -->
+  <p>Filter: <%= f.text_field :regex %> (keywords or regular expression; Tip: leave blank to catch all)</p> <!-- TODO: support regexp -->
   <p>Visibility: <%=  select :t, :visibility, {"Public"=>"public", "Private"=>"private"}, {:include_blank => false} %></p>
-  <!-- TODO: auto subscribe the user to the tracker he added -->
+  <!-- TODO: auto subscribe the user to the tracker he added: add a check box to do so -->
   <p><%= submit_tag 'Add'%></p>
 <% end %>
 
@@ -18,11 +18,11 @@
     <tr>
       <th>Title</th>
       <th>Visibility</th>
-      <th>Source Feed</th>
+      <th>Source feed</th>
       <th>Filter</th>
       <th>Subscriptions</th>
       <!--th>Edit</th-->
-      <th>Delete</th>
+      <th class="action">Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -32,9 +32,9 @@
         <td class="<%= j.profile_id and "private" or "public" %>"><%= j.profile_id and "Private" or "Public" %></td>
         <td><%= link_to_image 'feed_icon.png', Rssfeed.find_by_id(j.rssfeed_id).url %> <%= link_to Rssfeed.find_by_id(j.rssfeed_id).title, Rssfeed.find_by_id(j.rssfeed_id).link %></td>
         <td class="code"><%= j.regex %></td>
-        <td><%= j.subscriptions_count > 0 and j.subscriptions_count.to_s or '' %></td>
+        <td><%= j.subscriptions_count > 0 and (j.subscriptions_count > 1 and j.subscriptions_count.to_s + ' users' or j.subscriptions_count.to_s + ' user') or '' %></td>
         <!--td><%=  %></td--> <!-- NOT IMPLEMENTED YET. Column 'Modify', for modifying the tracker. -->
-        <td><%= link_to_image 'editdelete.png', url_for(:action => 'destroy', :id => j.id) %></td>
+        <td class="action"><%= link_to_image 'editdelete.png', url_for(:action => 'destroy', :id => j.id) %></td>
       </tr>
     <% end -%>
   </tbody>
