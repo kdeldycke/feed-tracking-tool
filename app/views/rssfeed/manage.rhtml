@@ -9,22 +9,29 @@
 <% end %>
 
 
-<h4>All public feeds</h4>
+<h4>All feeds</h4>
 <table>
   <thead>
     <tr>
       <th>Feed</th>
       <th>Description</th>
-      <th>Delete</th>
+      <th>Articles</th>
+      <th>Last update</th>
+      <th class="action">Delete</th>
     </tr>
   </thead>
   <tbody>
     <% Rssfeed.find(:all, :order => 'title').each do |j| -%>
+      <% last_update = Article.find(:first, :conditions => {:rssfeed_id => j.id}, :order => "fetch_date DESC").fetch_date -%>
+      <% new_articles = Article.find(:all, :conditions => ["rssfeed_id = ? AND fetch_date >= ?", j.id, last_update]).size -%>
       <tr>
         <td class="title"><%= link_to_image 'feed_icon.png', j.url %> <%= link_to j.title, j.link %></td>
-        <td><%=j.description %></td>
-        <td><%= link_to_image 'editdelete.png', url_for(:action => 'destroy', :id => j.id) %></td>
+        <td><%= j.description %></td>
+        <td><%= Article.find(:all, :conditions => {:rssfeed_id => j.id}).size %><%= new_articles > 0 and ", <span class='new'>#{new_articles} new</span>" or "" %></td>
+        <td><%= last_update.strftime("%d %b %Y, %H:%M") %></td>
+        <td class="action"><%= link_to_image 'editdelete.png', url_for(:action => 'destroy', :id => j.id) %></td>
       </tr>
+
     <% end -%>
   </tbody>
 </table>
