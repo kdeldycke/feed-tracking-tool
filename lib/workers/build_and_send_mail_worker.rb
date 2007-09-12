@@ -21,7 +21,7 @@ class BuildAndSendMailWorker < BackgrounDRb::Worker::RailsBase
                                                 :tracker_id => d.tracker_id,
                                                 :profile_id => s.profile_id)
             article_to_send.save
-            logger.info "Article ##{d.article_id} marked as pending by tracker ##{d.tracker_id} for user ##{s.profile_id}."
+            logger.info "Article ##{d.article_id} marked as pending by tracker ##{d.tracker_id} for user ##{s.profile_id}"
           end
         end
 
@@ -30,6 +30,7 @@ class BuildAndSendMailWorker < BackgrounDRb::Worker::RailsBase
           # Check if the current user is registered in the profile table
           p = Profile.find(s.profile_id)
           if not p.blank?
+            logger.info "Send email to #{p.email}"
             Notifier.deliver_send_mail(p.email) # Send the mail
             # Delete article from the article_to_send table
             ArticleToSend.find(:all, :conditions => {:profile_id => s.profile_id}).each do |w|
