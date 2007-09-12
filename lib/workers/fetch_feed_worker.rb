@@ -1,3 +1,5 @@
+# TODO: do not use worker but task to embedded this code. This will allow us to remove the "suicide" code.
+
 class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
   # TODO: Voir fichier article.rb
@@ -8,6 +10,9 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     ###### Searching of articles in RSS feeds and update of database + Filtering
 
     remove_old  # Removing of articles published before 1 month ago
+
+    # Save current time as fetch date and to print statistics in log file in the future (TODO)
+    fetch_date = Time.now
 
     # For each entry of the rssfeed table
     Rssfeed.find(:all).each do |r|
@@ -54,7 +59,8 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
                           :url => @link[i],
                           :publication_date => @pubDate[i],
                           :description => @description[i],
-                          :rssfeed_id => r.id)
+                          :rssfeed_id => r.id,
+                          :fetch_date => fetch_date)
           art.save
         end
         i+=1
@@ -76,11 +82,11 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
       # And for each entry of the article table
       Article.find(:all, :conditions => [ "rssfeed_id = ?", t.rssfeed_id ]).each do |e|
         # Checking of the presence of the regex in the title or the description of the article
-        
+
         inc = false
         if e.title.include? t.regex
           inc = true
-        else 
+        else
           unless e.description.nil?
             if e.description.include? t.regex
               inc = true
@@ -101,7 +107,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
             tr.save
           end
         end
-              
+
       end
     end
   end
