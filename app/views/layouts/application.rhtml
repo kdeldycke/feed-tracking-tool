@@ -14,8 +14,9 @@
   </div>
 
   <% unless session[:user].blank? %>
-    <ul id="navigation">
-      <li><%= link_to "Feeds", :controller => 'rssfeed', :action => 'manage' %></li>
+    <!-- TODO: code clean tabs ! -->
+    <ul id="navigation" class="toolbar">
+      <li class="selected"><%= link_to "Feeds", :controller => 'rssfeed', :action => 'manage' %></li>
       <li><%= link_to "Trackers", :controller => 'tracker', :action => 'edit' %></li>
       <!--li><%= link_to "Users Statistics", :controller => 'profile', :action => 'users' %></li>
       <li><%= link_to "Trackers Statistics", :controller => 'subscription', :action => 'trackers' %></li-->
@@ -25,7 +26,8 @@
   <div id="content">
 
     <% unless session[:user].blank? %>
-      <ul id="usertoolbar">
+      <!-- TODO: tab-ification of the personnal toolbar ? -->
+      <ul id="personnal" class="toolbar">
         <li>Logged in as: <%= session[:user][:display_name] %></li>
         <li><%= link_to 'Dashboard', :controller => 'dashboard', :action => 'display' %></li>
         <li><%= link_to "Archives", :controller => 'dashboard', :action => 'history' %></li>
@@ -34,12 +36,12 @@
       </ul>
     <% end %>
 
-    <% unless flash[:notice].blank? %>
-      <div id="notification"><%= flash[:notice] %></div>
+    <% unless flash[:warning].blank? %>
+      <div id="warning" class="flashbox"><%= flash[:warning] %></div>
     <% end %>
 
-    <% unless flash[:warning].blank? %>
-      <div id="warning"><%= flash[:warning] %></div>
+    <% unless flash[:notice].blank? %>
+      <div id="notification" class="flashbox"><%= flash[:notice] %></div>
     <% end %>
 
     <%= yield %>
@@ -47,8 +49,8 @@
   </div>
 
   <div id="footer">
-    <p>Feed Tracking Tool v0.8.4-trunk<!-- TODO: version number should be an application-wide constant --></p>
     <p>Anything wrong ? Please read the famous <a href="http://www.chiark.greenend.org.uk/~sgtatham/bugs.html">How to Report Bugs Effectively</a> document before <a href="http://bugtracker.uperto.com">filling a bug report in the bugtracker</a>.</p>
+    <p>Feed Tracking Tool v<%= FTT_VERSION %></p>
   </div>
 
 </body>
