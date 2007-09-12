@@ -1,12 +1,10 @@
+/* Global styles
+======================================================== */
 body {
   background-color: #666;
-  margin: 1em 2em;
   font-family: Helvetica, Arial, sans-serif;
   font-size: smaller;
-}
-
-p {
-  margin-bottom: .8em;
+  margin: 1em 2em;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -21,19 +19,152 @@ h4 {font-size: 1.4em;}
 h5 {font-size: 1.2em;}
 h6 {font-size: 1.1em;}
 
+p {
+  margin-bottom: .8em;
+}
+
+p, td, th {
+  line-height: 1.3em;
+}
+
 a:link, a:visited {text-decoration: none;}
 a:active, a:hover {text-decoration: underline;}
 /*a:link {color: }
 a:visited {color: }
 a:hover {color: }*/
 
+.code, code {
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* Status color code */
+.public , .sent          {color: #67bc64;}
+.private, .pending, .new {color: #fe6600;}
+
+
+
+/* Header styles
+======================================================== */
+#header {
+  text-align: center;
+  margin: 1.8em;
+}
+
+#header h1 {
+  color: #fff;
+  text-shadow: #999 0 0 .3em;
+}
+
+
+
+/* Main content area styles
+======================================================== */
+#content {
+  background-color: #fff;
+  border: 10px solid #ccc;
+  padding: 1em;
+  clear: both;
+}
+
+#content h2 {
+  margin: 0 0 1em;
+}
+
+#content h4 {
+  margin: 3em 0 1em;
+}
+
+
+
+/* Toolbar styles
+======================================================== */
+.toolbar {
+}
+
+.toolbar li {
+  display: inline;
+}
+
+#navigation {
+  text-align: center;
+/*   margin: 0 auto; */
+  font-weight: bold;
+}
+
+#navigation li {
+}
+
+#navigation li a {
+  color: #666;
+  background: #ccc;
+  text-decoration: none;
+  padding: 8px 1em;
+/*    float: left; */
+}
+
+#navigation li.selected a {
+  background: #fff;
+  color: #000;
+}
+
+#navigation li a:hover, #navigation li.selected a:hover {
+  background: #ddd;
+  color: #000;
+}
+
+#personnal {
+  text-align: right;
+  padding: 5px 0;
+}
+
+#personnal li {
+  padding: 0 .3em;
+}
+
+
+
+/* Flash Box styles
+======================================================== */
+.flashbox {
+  padding: 5px;
+  margin: 10px 0;
+  border-style: solid;
+  border-width: 5px;
+}
+
+#notification {
+  background-color: #cfc;
+  border-color: #9c9;
+}
+
+#warning {
+  background-color: #fc6;
+  border-color: #f93;
+}
+
+
+
+/* Forms styles
+======================================================== */
+.fieldWithErrors {
+  border: 5px solid #f66;
+}
+
+
+
+/* Generic table style
+======================================================== */
 table {
   border-collapse: collapse;  /* Patch Eric Meyer's reset style CSS */
-  width: 99%;
+  width: 100%;
 }
 
 td, th {
-  padding: .2em;
+  padding: .2em .4em .2em .2em;
+}
+
+th {
+  vertical-align: bottom;
 }
 
 td a img {
@@ -60,24 +191,22 @@ table .title {
   font-weight: bold;
 }
 
-table td.public {
-  color: #9bd299;
+table .action {
+  text-align: center;
 }
 
-table td.private {
-  color: #ffa757;
-}
 
-table td.code {
-  font-family: monospace;
-}
 
+/* Big button style
+======================================================== */
 div.button {
   float: right;
 }
+
 div.button a img {
-vertical-align: middle;
+  vertical-align: middle;
 }
+
 div.button a {
   margin: 1em;
   padding: .5em;
@@ -88,6 +217,7 @@ div.button a {
   color: #666;
   font-weight: bold;
 }
+
 div.button a:hover {
   background: #b7ddc8;
   text-decoration: none;
@@ -95,68 +225,10 @@ div.button a:hover {
   border-color: #65ab41;
 }
 
-#header {
-  text-align: center;
-  margin: 1em;
-}
-#header h1 {
-  color: #fff;
-  text-shadow: #999 0 0 3px;
-}
-
-#content {
-  background-color: #fff;
-  border: 10px solid #ccc;
-  padding: 1em;
-}
-#content h2 {
-  margin: 0 0 1em 0;
-}
-#content h4 {
-  margin: 3em 0 1em 0;
-}
 
 
-#navigation, #usertoolbar {
-  padding: 5px 0;
-}
-#navigation li, #usertoolbar li {
-  display: inline;
-  padding: 0 5px;
-}
-
-#navigation {
-  text-align: center;
-}
-#navigation li a {
-  color: #fff;
-}
-
-
-#usertoolbar {
-  text-align: right;
-}
-
-
-#notification {
-  border: 5px solid #9c9;
-  background-color: #cfc;
-  padding: 5px;
-  margin: 10px 0;
-}
-
-#warning {
-  border: 5px solid #f93;
-  background-color: #fc6;
-  padding: 5px;
-  margin: 10px 0;
-}
-
-
-.fieldWithErrors {
-  border: 5px solid #f66;
-}
-
+/* Footer style
+======================================================== */
 #footer {
   color: #ccc;
   text-align: center;
@@ -166,16 +238,4 @@ div.button a:hover {
 
 #footer a {
   color: #eee;
-}
-
-
-/* Feed list style */
-#feedlist h5 span.actions {
-  font-size: .8em;
-  font-weight: normal;
-}
-
-#feedlist li {
-  border-bottom: 1px dotted #ccc;
-  margin-bottom: 1em;
 }
