@@ -100,4 +100,4 @@ FeedTools.configurations[:proxy_port] = 8080
 
 
 # Application constant
-FTT_VERSION = "0.9.0-trunk"
+FTT_VERSION = "0.9.0"
