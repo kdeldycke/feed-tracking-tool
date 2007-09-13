@@ -10,6 +10,4 @@ class Subscription < ActiveRecord::Base
       errors.add(:frequency, "must be comprised between 1 and 31 days") unless (frequency > 0 and frequency < 32)
     end
   end
-
-  # TODO: check if the user has an email in his Profile
 end
