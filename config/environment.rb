@@ -58,22 +58,28 @@ ActiveRecord::Base.pluralize_table_names = false
 # XXX Why don't use pure ruby based solution like http://blog.pomozov.info/posts/how-to-send-actionmailer-mails-to-gmailcom.html ?
 ActionMailer::Base.delivery_method = :msmtp
 
-# Setup MSMTP context
-MSMTP_CONF = Pathname.new(File.join(RAILS_ROOT, "config", "msmtp.conf"))  # Use config file located in RoR
-MSMTP_CONF_PATH = MSMTP_CONF.realpath.to_s
+# Normalize rails root path
+RAILS_PATH = Pathname.new(RAILS_ROOT).realpath.to_s
+# MSMTP config file
+MSMTP_CONF = File.join(RAILS_PATH, "config", "msmtp.conf") # Use config file located in RoR
+File.chmod(0600, MSMTP_CONF)
+FileUtils.chown(ENV['USER'], nil, MSMTP_CONF)
+# MSMTP log file
+MSMTP_LOG = File.join(RAILS_PATH, "log", "msmtp.log")
+if not File.exist? MSMTP_LOG
+  f = File.new(MSMTP_LOG, "w+")
+  f.close
+end
+# MSMTP binary
 MSMTP_BIN = Pathname.new("/usr/bin/msmtp").realpath.to_s  # TODO: generate path dynamiccaly ?
-# Adjust config file permissions and ownership
-MSMTP_CONF.chmod 0600
-FileUtils.chown ENV['USER'], nil, MSMTP_CONF_PATH
 # TODO: Check here that msmtp is installed and available on the system
 
 # Register MSMTP sending method in Action Mailer
 module ActionMailer
   class Base
     def perform_delivery_msmtp(mail)
-      mail_cmd = "#{MSMTP_BIN} -t -C #{MSMTP_CONF_PATH} -a provider --"
+      mail_cmd = %(#{MSMTP_BIN} -t -C "#{MSMTP_CONF}" --logfile="#{MSMTP_LOG}" -a provider --)
       logger.info("Try to send mail with MSMTP: `#{mail_cmd}`")
-      logger.info("Mail content: `#{mail}`")
       IO.popen(mail_cmd, "w") do |sm|
         sm.puts(mail.encoded.gsub(/\r/, ''))
         sm.flush
