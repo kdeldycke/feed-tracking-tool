@@ -21,7 +21,7 @@ class FeedController < ApplicationController
             feed.update_attribute :title , @title               # The title field is updated in the feed table
             feed.update_attribute :description, @description    # The description field is updated in the feed table
             feed.update_attribute :link, @link                  # The link field is updated in the feed table
-            flash[:notice] = "New feed added. Articles from this feed will be fetched within the hour. You can track this feed in 'Trackers' panel."
+            flash[:notice] = "New feed added. Articles from this feed will be fetched within the hour."
           else
             flash[:warning] = "Invalid URL !"
             feed.destroy
@@ -32,7 +32,7 @@ class FeedController < ApplicationController
           @feed = feed
         end
       else
-        flash[:notice] = "This feed already exists in FTT public feeds."
+        flash[:notice] = "This feed was already added to database."
       end
       redirect_to :controller => 'feed' # Go back to default feed view
     end
@@ -56,11 +56,11 @@ class FeedController < ApplicationController
   def delete
     feed = Feed.find(params[:id])   # Get the feed to delete
     if feed.trackers_count > 0
-      flash[:warning] = "Can't remove feed as long as some trackers are still using it as content source."
+      flash[:warning] = "Can't remove feed as long as trackers are still using it."
     else
       feed.destroy
       feed.save
-      flash[:notice] = 'Feed removed !'
+      flash[:notice] = "Feed removed !"
     end
     redirect_to :controller => 'feed' # Go back to default feed view
   end
