@@ -35,7 +35,7 @@
         <td class="code"><%= j.regex %></td>
         <td><%= j.subscriptions_count > 0 and (j.subscriptions_count > 1 and j.subscriptions_count.to_s + ' users' or j.subscriptions_count.to_s + ' user') or '' %></td>
         <!--td><%=  %></td--> <!-- NOT IMPLEMENTED YET. Column 'Modify', for modifying the tracker. -->
-        <td class="action"><%= link_to_image 'editdelete.png', url_for(:action => 'destroy', :id => j.id) %></td>
+        <td class="action"><%= link_to_image 'delete.png', url_for(:action => 'destroy', :id => j.id) %></td>
       </tr>
     <% end -%>
   </tbody>

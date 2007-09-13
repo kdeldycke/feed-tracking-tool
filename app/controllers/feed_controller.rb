@@ -1,11 +1,11 @@
 class FeedController < ApplicationController
 
+  # Default method to view a flat list of all feed in the database
   def index
-    # Default method to view a flat list of all feed in the database
   end
 
+  # Method to add a new feed in the database
   def add
-    # Method to add a new feed in the database
     feed = Feed.new(params[:feed])  # Creation of an entry in feed table
     if request.post?
       # We check if the entered feed already exists in the database
@@ -52,16 +52,14 @@ class FeedController < ApplicationController
     return ret
   end
 
-  # Method for removing a feed from the database
-  def destroy
-    r = Feed.find(params[:id])   # Searching in the database of the feed to remove
-
-    d = r.trackers_count        # We count the number of trackers associated to this feed
-    if d>0                      # If this number is positive, we can't remove the RSS feed
+  # Method that delete a feed from the database
+  def delete
+    feed = Feed.find(params[:id])   # Get the feed to delete
+    if feed.trackers_count > 0
       flash[:warning] = "Can't remove feed as long as some trackers are still using it as content source."
     else
-      r.destroy                     # Destroying the feed
-      r.save
+      feed.destroy
+      feed.save
       flash[:notice] = 'Feed removed !'
     end
     redirect_to :controller => 'feed' # Go back to default feed view
