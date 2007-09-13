@@ -1,9 +1,10 @@
 class Subscription < ActiveRecord::Base
   belongs_to :tracker
   belongs_to :profile
+
+  # TODO: un-duplicate code below from profile model
   validates_presence_of :frequency
   validates_numericality_of :frequency
-
   protected
   def validate
     unless frequency.nil?
