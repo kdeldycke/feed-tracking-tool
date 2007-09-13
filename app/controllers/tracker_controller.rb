@@ -4,7 +4,7 @@
 
 class TrackerController < ApplicationController
 
-  def edit
+  def index
     @tracker = Tracker.new(params[:tracker])  # Creation of a new entry in tracker table
     @feeds = Feed.find(:all)               # Gets RSS feeds in feed table
     @selected_feed = []                        # Used to get the selected feed
@@ -29,7 +29,7 @@ class TrackerController < ApplicationController
         subscription.save
       end
       flash[:notice] = "New tracker created."
-      redirect_to :controller => 'tracker', :action => 'edit'     # Refreshing page
+      redirect_to :controller => 'tracker'  # Go back to default view
     end
   end
 
@@ -45,7 +45,7 @@ class TrackerController < ApplicationController
       t.save
       flash[:notice] = 'Tracker deleted.'
     end
-    redirect_to :controller => 'tracker', :action => 'edit'     # Refreshing page
+    redirect_to :controller => 'tracker'  # Go back to default view
   end
 
 end
