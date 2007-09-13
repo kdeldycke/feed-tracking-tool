@@ -1,8 +1,11 @@
-<h2>Dashboard</h2><br>
+<h2>Dashboard</h2>
 
-<!-- TODO: Sort articles by date -->
+<div class="button">
+  <a href="<%= url_for(:controller => 'subscription', :action => 'manage') %>"><%= image_tag "add-big.png" %> Subscribe to a Tracker</a>
+</div>
 
 <h4>My subscriptions</h4>
+<!-- TODO: Sort articles by date -->
 <table>
   <thead>
     <tr>
@@ -29,10 +32,6 @@
     <% end -%>
   </tbody>
 </table>
-<div class="button">
-  <a href="<%= url_for(:controller => 'subscription', :action => 'manage') %>"><%= image_tag "add-big.png" %> Subscribe to a Tracker</a>
-</div>
-
 
 <h4>Pending articles</h4>
 <table>
