@@ -33,17 +33,15 @@ class TrackerController < ApplicationController
     end
   end
 
-  # Method for removing a tracker
-  def destroy
-    t=Tracker.find(params[:id])   # Searching in database for the tracker to remove
-
-    d = t.subscriptions_count   # We count the number of subscriptions to this tracker
-    if d>0                      # If this number is positive, we can't remove the tracker
-      flash[:warning] = "Other users are still using this tracker: you can't remove it !"
+  # Method that delete a feed from the database
+  def delete
+    tracker = Tracker.find(params[:id])
+    if tracker.subscriptions_count > 0
+      flash[:warning] = "Can't remove tracker as long as users are still using it."
     else
-      t.destroy                     # Destroying the tracker
-      t.save
-      flash[:notice] = 'Tracker deleted.'
+      tracker.destroy
+      tracker.save
+      flash[:notice] = 'Tracker deleted !'
     end
     redirect_to :controller => 'tracker'  # Go back to default view
   end
