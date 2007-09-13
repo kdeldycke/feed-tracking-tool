@@ -17,8 +17,18 @@ class TrackerController < ApplicationController
       end
       # Link the selected feed with our tracker
       @selected_feed = params[:feed][:id]
-      @tracker.update_attribute :feed_id, @selected_feed          # Update of feed_id field in feed table
-      flash[:notice] = "New tracker created. You can subscribe to this tracker in 'My Subscriptions'."
+      @tracker.update_attribute :feed_id, @selected_feed
+      # Auto-subscribe to the tracker ?
+      # TODO: use subscription model to validate forms data
+      if params[:t][:subscribe].to_i > 0 and params[:t][:frequency]
+        # TODO: Use subscription controller to create new subscription with riht date_last_mail
+        subscription = Subscription.new( {:frequency => params[:t][:frequency],
+                                          :tracker_id => @tracker.id,
+                                          :profile_id => session[:user][:profile_id],
+                                          :date_lastmail => (Time.now - (params[:t][:frequency].to_i*3600*24))}) # XXX Duplicate code with subscription controler
+        subscription.save
+      end
+      flash[:notice] = "New tracker created."
       redirect_to :controller => 'tracker', :action => 'edit'     # Refreshing page
     end
   end
@@ -39,5 +49,3 @@ class TrackerController < ApplicationController
   end
 
 end
-
-# TODO: User must be able to modify a tracker
