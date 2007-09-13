@@ -1,0 +1,6 @@
+<h2>Add new feed</h2>
+<%= error_messages_for 'feed' %>
+<% form_for :feed do |f| %>
+  <p>URL: <%= f.text_field :url %> <%= submit_tag 'Add'%></p>
+  <p>Supported formats: RSS, ATOM, RDF, XML, CDF and anything that advertise itself as a feed.</p>
+<% end %>

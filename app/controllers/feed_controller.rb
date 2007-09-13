@@ -1,6 +1,11 @@
 class FeedController < ApplicationController
 
-  def manage
+  def index
+    # Default method to view a flat list of all feed in the database
+  end
+
+  def add
+    # Method to add a new feed in the database
     feed = Feed.new(params[:feed])  # Creation of an entry in feed table
     if request.post?
       # We check if the entered feed already exists in the database
@@ -18,18 +23,18 @@ class FeedController < ApplicationController
             feed.update_attribute :link, @link                  # The link field is updated in the feed table
             flash[:notice] = "New feed added. Articles from this feed will be fetched within the hour. You can track this feed in 'Trackers' panel."
           else
-            flash[:warning] = "Invalid URL!"
+            flash[:warning] = "Invalid URL !"
             feed.destroy
             feed.save
           end
         else
-          flash[:warning] = "Invalid URL!"
+          flash[:warning] = "Invalid URL !"
           @feed = feed
         end
       else
-        flash[:warning] = "This feed already exists in FTT public feeds."
+        flash[:notice] = "This feed already exists in FTT public feeds."
       end
-      redirect_to :controller => 'feed', :action => 'manage' # Refreshing page
+      redirect_to :controller => 'feed' # Go back to default feed view
     end
   end
 
@@ -53,13 +58,13 @@ class FeedController < ApplicationController
 
     d = r.trackers_count        # We count the number of trackers associated to this feed
     if d>0                      # If this number is positive, we can't remove the RSS feed
-      flash[:warning] = "Some trackers are still using the feed as content source: you can't remove it."
+      flash[:warning] = "Can't remove feed as long as some trackers are still using it as content source."
     else
       r.destroy                     # Destroying the feed
       r.save
-      flash[:notice] = 'Feed removed successfully!'
+      flash[:notice] = 'Feed removed !'
     end
-    redirect_to :controller => 'feed', :action => 'manage' # Refreshing page
+    redirect_to :controller => 'feed' # Go back to default feed view
   end
 
 end

@@ -1,15 +1,9 @@
-<h2>Manage feeds</h2>
+<h2>All feeds</h2>
 
+<div class="button">
+  <a href="<%= url_for(:controller => 'feed', :action => 'add') %>"><%= image_tag "add.png" %> Add new feed</a>
+</div>
 
-<h4>Add new feed</h4>
-<%= error_messages_for 'feed' %>
-<% form_for :feed do |f| %>
-  <p>URL: <%= f.text_field :url %> <%= submit_tag 'Add'%></p>
-  <p>Supported formats: RSS, ATOM, RDF, XML, CDF and anything that advertise itself as a feed.</p>
-<% end %>
-
-
-<h4>All feeds</h4>
 <table>
   <thead>
     <tr>
@@ -40,7 +34,6 @@
         <td><%= last_update and last_update.strftime("%d %b %Y, %H:%M") or ""%></td>
         <td class="action"><%= link_to_image 'editdelete.png', url_for(:action => 'destroy', :id => j.id) %></td>
       </tr>
-
     <% end -%>
   </tbody>
 </table>
