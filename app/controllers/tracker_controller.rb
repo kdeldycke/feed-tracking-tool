@@ -1,5 +1,4 @@
-# TODO: Private trackers
-#       Possibility to select several feeds for a tracker
+# TODO: Possibility to select several feeds for a tracker
 #       Possibility to modify (edit) a tracker
 #       Regular expressions management (now only keywords are handled)
 
