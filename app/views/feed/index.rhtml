@@ -32,7 +32,7 @@
         <td><%= j.description %></td>
         <td><%= Article.find(:all, :conditions => {:feed_id => j.id}).size %><%= (new_articles > 0) and ", <span class='new'>#{new_articles} new</span>" or "" %></td>
         <td><%= last_update and last_update.strftime("%d %b %Y, %H:%M") or ""%></td>
-        <td class="action"><%= link_to_image 'delete.png', url_for(:action => 'delete', :id => j.id) %></td>
+        <td class="action"><%= link_to_image (j.trackers_count > 0 and 'delete-off.png' or 'delete.png'), url_for(:action => 'delete', :id => j.id) %></td>
       </tr>
     <% end -%>
   </tbody>
