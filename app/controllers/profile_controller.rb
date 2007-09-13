@@ -16,6 +16,7 @@ class ProfileController < ApplicationController
       profile.email = params[:profile][:email]
       profile.suspend_email = params[:profile][:suspend_email]
       profile.display_name = params[:profile][:display_name]
+      profile.default_frequency = params[:profile][:default_frequency]
       # TODO: if one of the variable is empty, get LDAP default value like login_controller do. If so, warn the user with this following message: flash[:notice] = 'Preferences updated. Display name resetted to LDAP default.' I think all this stuff must be generic enough to not repeat ourselves and to be put in profile_helper...
       # Try to save the new profile in the database
       if profile.save
