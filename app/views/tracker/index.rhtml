@@ -1,18 +1,9 @@
-<h2>Manage trackers</h2>
+<h2>All trackers</h2>
 
+<div class="button">
+  <a href="<%= url_for(:controller => 'tracker', :action => 'add') %>"><%= image_tag "add-big.png" %> Add new tracker</a>
+</div>
 
-<h4>Add new tracker</h4>
-<% form_for :tracker do |f| %>
-  <p>Title: <%= f.text_field :title %></p>
-  <p>Source feed: <%= collection_select(:feed, :id, @feeds, :id, :title) %></p>
-  <p>Filter: <%= f.text_field :regex %> (keywords or regular expression; Tip: leave blank to catch all)</p> <!-- TODO: support regexp -->
-  <p>Visibility: <%=  select :t, :visibility, {"Public"=>"public", "Private"=>"private"}, {:include_blank => false} %></p>
-  <p>Subscribe to tracker: <%= check_box :t, :subscribe, :valeur_on => true, :valeur_off => false, :checked => "checked" %> and send mail every <%= text_field :t, :frequency, :size => '5', :value => Profile.find(session[:user][:profile_id]).default_frequency %> days</p>
-  <p><%= submit_tag 'Add'%></p>
-<% end %>
-
-
-<h4>All trackers</h4>
 <table>
   <thead>
     <tr>

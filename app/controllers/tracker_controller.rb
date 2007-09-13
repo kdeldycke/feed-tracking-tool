@@ -5,6 +5,9 @@
 class TrackerController < ApplicationController
 
   def index
+  end
+
+  def add
     @tracker = Tracker.new(params[:tracker])  # Creation of a new entry in tracker table
     @feeds = Feed.find(:all)               # Gets RSS feeds in feed table
     @selected_feed = []                        # Used to get the selected feed
