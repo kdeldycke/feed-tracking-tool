@@ -2,8 +2,8 @@
 
 
 <h4>Add new feed</h4>
-<%= error_messages_for 'rssfeed' %>
-<% form_for :rssfeed do |f| %>
+<%= error_messages_for 'feed' %>
+<% form_for :feed do |f| %>
   <p>URL: <%= f.text_field :url %> <%= submit_tag 'Add'%></p>
   <p>Supported formats: RSS, ATOM, RDF, XML, CDF and anything that advertise itself as a feed.</p>
 <% end %>
@@ -21,22 +21,22 @@
     </tr>
   </thead>
   <tbody>
-    <% Rssfeed.find(:all, :order => 'title').each do |j| -%>
+    <% Feed.find(:all, :order => 'title').each do |j| -%>
       <% # BAD and UGLY logic with view mix !
-        last_updated_object = Article.find(:first, :conditions => {:rssfeed_id => j.id}, :order => "fetch_date DESC")
+        last_updated_object = Article.find(:first, :conditions => {:feed_id => j.id}, :order => "fetch_date DESC")
         last_update = nil
         if last_updated_object
           last_update = last_updated_object.fetch_date
         end
         new_articles = 0
         if last_update
-          new_articles = Article.find(:all, :conditions => ["rssfeed_id = ? AND fetch_date >= ?", j.id, last_update]).size
+          new_articles = Article.find(:all, :conditions => ["feed_id = ? AND fetch_date >= ?", j.id, last_update]).size
         end
       %>
       <tr>
         <td class="title"><%= link_to_image 'feed_icon.png', j.url %> <%= link_to j.title, j.link %></td>
         <td><%= j.description %></td>
-        <td><%= Article.find(:all, :conditions => {:rssfeed_id => j.id}).size %><%= (new_articles > 0) and ", <span class='new'>#{new_articles} new</span>" or "" %></td>
+        <td><%= Article.find(:all, :conditions => {:feed_id => j.id}).size %><%= (new_articles > 0) and ", <span class='new'>#{new_articles} new</span>" or "" %></td>
         <td><%= last_update and last_update.strftime("%d %b %Y, %H:%M") or ""%></td>
         <td class="action"><%= link_to_image 'editdelete.png', url_for(:action => 'destroy', :id => j.id) %></td>
       </tr>

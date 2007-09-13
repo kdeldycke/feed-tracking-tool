@@ -4,7 +4,7 @@
 </p>
 
 <p><b>Tracker:</b> <%= @tracker %></p>
-<p><b>Source feed:</b> <%= link_to @rssfeed_title, @rssfeed_url %></p>
+<p><b>Source feed:</b> <%= link_to @feed_title, @feed_url %></p>
 <hr/>
 
 <% ArticleToSend.find(:all).each do |o| %>

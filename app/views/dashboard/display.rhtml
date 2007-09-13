@@ -20,7 +20,7 @@
       <tr>
         <td class="title"><%= Tracker.find_by_id(s.tracker_id).title %></td>
         <td class="<%= Tracker.find_by_id(s.tracker_id).profile_id and "private" or "public" %>"><%= Tracker.find_by_id(s.tracker_id).profile_id and "Private" or "Public" %></td>
-        <td><%= link_to_image 'feed_icon.png', Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).url %> <%= link_to Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).title, Rssfeed.find_by_id(Tracker.find_by_id(s.tracker_id).rssfeed_id).link %></td>
+        <td><%= link_to_image 'feed_icon.png', Feed.find_by_id(Tracker.find_by_id(s.tracker_id).feed_id).url %> <%= link_to Feed.find_by_id(Tracker.find_by_id(s.tracker_id).feed_id).title, Feed.find_by_id(Tracker.find_by_id(s.tracker_id).feed_id).link %></td>
         <td class="code"><%= Tracker.find_by_id(s.tracker_id).regex %></td>
         <td><%= s.frequency == 1 and  "Every day" or s.frequency.to_s + ' days'%></td>
         <td><%= s.date_lastmail.strftime("%d %b %Y, %H:%M") %></td>

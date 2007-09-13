@@ -1,4 +1,4 @@
-class Rssfeed < ActiveRecord::Base
+class Feed < ActiveRecord::Base
   has_many :trackers
   # Inspired by http://www.nshb.net/node/252
 

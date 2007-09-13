@@ -4,7 +4,7 @@
 <h4>Add new tracker</h4>
 <% form_for :tracker do |f| %>
   <p>Title: <%= f.text_field :title %></p>
-  <p>Source feed: <%= collection_select(:rssfeed, :id, @feeds, :id, :title) %></p>
+  <p>Source feed: <%= collection_select(:feed, :id, @feeds, :id, :title) %></p>
   <p>Filter: <%= f.text_field :regex %> (keywords or regular expression; Tip: leave blank to catch all)</p> <!-- TODO: support regexp -->
   <p>Visibility: <%=  select :t, :visibility, {"Public"=>"public", "Private"=>"private"}, {:include_blank => false} %></p>
   <!-- TODO: auto subscribe the user to the tracker he added: add a check box to do so -->
@@ -31,7 +31,7 @@
       <tr>
         <td class="title"><%= j.title %></td>
         <td class="<%= j.profile_id and "private" or "public" %>"><%= j.profile_id and "Private" or "Public" %></td>
-        <td><%= link_to_image 'feed_icon.png', Rssfeed.find_by_id(j.rssfeed_id).url %> <%= link_to Rssfeed.find_by_id(j.rssfeed_id).title, Rssfeed.find_by_id(j.rssfeed_id).link %></td>
+        <td><%= link_to_image 'feed_icon.png', Feed.find_by_id(j.feed_id).url %> <%= link_to Feed.find_by_id(j.feed_id).title, Feed.find_by_id(j.feed_id).link %></td>
         <td class="code"><%= j.regex %></td>
         <td><%= j.subscriptions_count > 0 and (j.subscriptions_count > 1 and j.subscriptions_count.to_s + ' users' or j.subscriptions_count.to_s + ' user') or '' %></td>
         <!--td><%=  %></td--> <!-- NOT IMPLEMENTED YET. Column 'Modify', for modifying the tracker. -->

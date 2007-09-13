@@ -11,7 +11,7 @@
     <% Subscription.find(:all, :conditions => [ "user_id = ?", user.user_id ]).each do |j| -%>
       <tr>
         <td><%= Tracker.find_by_id(j.tracker_id).title %></td>
-        <td><%= Rssfeed.find_by_id(Tracker.find_by_id(j.tracker_id).rssfeed_id).title %></td>
+        <td><%= Feed.find_by_id(Tracker.find_by_id(j.tracker_id).feed_id).title %></td>
       </tr>
     <% end -%>
   </tbody>

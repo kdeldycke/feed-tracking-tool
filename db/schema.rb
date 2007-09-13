@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 28) do
+ActiveRecord::Schema.define(:version => 29) do
 
   create_table "article", :force => true do |t|
     t.column "title",            :string
@@ -10,7 +10,7 @@ ActiveRecord::Schema.define(:version => 28) do
     t.column "description",      :text
     t.column "publication_date", :datetime
     t.column "fetch_date",       :datetime
-    t.column "rssfeed_id",       :integer
+    t.column "feed_id",          :integer
   end
 
   create_table "article_to_send", :force => true do |t|
@@ -19,18 +19,18 @@ ActiveRecord::Schema.define(:version => 28) do
     t.column "profile_id", :integer
   end
 
+  create_table "feed", :force => true do |t|
+    t.column "title",       :string
+    t.column "description", :text
+    t.column "url",         :string
+    t.column "link",        :string
+  end
+
   create_table "profile", :force => true do |t|
     t.column "user_id",       :string
     t.column "email",         :string
     t.column "suspend_email", :boolean
     t.column "display_name",  :string
-  end
-
-  create_table "rssfeed", :force => true do |t|
-    t.column "title",       :string
-    t.column "description", :text
-    t.column "url",         :string
-    t.column "link",        :string
   end
 
   create_table "sent_article_archive", :force => true do |t|
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(:version => 28) do
   create_table "tracker", :force => true do |t|
     t.column "regex",      :string
     t.column "title",      :string
-    t.column "rssfeed_id", :integer
+    t.column "feed_id",    :integer
     t.column "profile_id", :integer
   end
 

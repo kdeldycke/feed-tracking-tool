@@ -14,8 +14,8 @@ class Notifier < ActionMailer::Base
     #Body
     body  :username => Profile.find_by_email(email).display_name,
           :tracker => Tracker.find_by_id(ArticleToSend.find_by_profile_id(Profile.find_by_email(email).id).tracker_id).title,
-          :rssfeed_title => Rssfeed.find_by_id(Tracker.find_by_id(ArticleToSend.find_by_profile_id(Profile.find_by_email(email).id).tracker_id).rssfeed_id).title,
-          :rssfeed_url => Rssfeed.find_by_id(Tracker.find_by_id(ArticleToSend.find_by_profile_id(Profile.find_by_email(email).id).tracker_id).rssfeed_id).url
+          :feed_title => Feed.find_by_id(Tracker.find_by_id(ArticleToSend.find_by_profile_id(Profile.find_by_email(email).id).tracker_id).feed_id).title,
+          :feed_url => Feed.find_by_id(Tracker.find_by_id(ArticleToSend.find_by_profile_id(Profile.find_by_email(email).id).tracker_id).feed_id).url
   end
 
 end
