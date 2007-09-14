@@ -28,7 +28,7 @@
         end
       %>
       <tr>
-        <td class="title"><%= link_to_image 'feed_icon.png', feed.url %> <%= link_to feed.title, feed.link %></td>
+        <td class="title"><%= feed.url.blank? and image_tag('feed_icon.png') or link_to_image('feed_icon.png', feed.url) %> <%= feed.link.blank? and feed.title or link_to(feed.title, feed.link) %></td>
         <td><%= feed.description %></td>
         <td><%= Article.find(:all, :conditions => {:feed_id => feed.id}).size %><%= (new_articles > 0) and ", <span class='new'>#{new_articles} new</span>" or "" %></td>
         <td><%= last_update and last_update.strftime(DATE_FORMAT) or ""%></td>
