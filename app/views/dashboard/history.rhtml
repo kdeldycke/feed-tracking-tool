@@ -21,7 +21,7 @@
         <tr>
           <td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>
           <td><%= Article.find_by_id(k.article_id).description %></td>
-          <td><%= Article.find_by_id(k.article_id).publication_date.strftime("%d %b %Y, %H:%M") %></td>
+          <td><%= Article.find_by_id(k.article_id).publication_date.strftime(DATE_FORMAT) %></td>
           <td><%= Tracker.find_by_id(k.tracker_id).title %></td>
           <td class="<%= v and 'sent' or 'pending'%>"><%= v and 'Sent' or 'Pending'%></td>
         </tr>

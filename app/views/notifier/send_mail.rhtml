@@ -9,7 +9,7 @@
 
 <% ArticleToSend.find(:all).each do |o| %>
   <h4><%= link_to Article.find_by_id(o.article_id).title, Article.find_by_id(o.article_id).url %></h4>
-  <p><i><%= Article.find_by_id(o.article_id).publication_date.strftime("%d %b %Y, %H:%M") %></i></p>
+  <p><i><%= Article.find_by_id(o.article_id).publication_date.strftime(DATE_FORMAT) %></i></p>
   <p><%= Article.find_by_id(o.article_id).description %></p>
   <hr/>
 <% end %>

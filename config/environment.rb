@@ -107,3 +107,4 @@ FeedTools.configurations[:proxy_port] = 8080
 
 # Application constant
 FTT_VERSION = "0.9.2-trunk"
+DATE_FORMAT = "%d %b %Y, %H:%M"

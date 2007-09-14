@@ -26,7 +26,7 @@
         <td><%= link_to_image 'feed_icon.png', Feed.find_by_id(Tracker.find_by_id(s.tracker_id).feed_id).url %> <%= link_to Feed.find_by_id(Tracker.find_by_id(s.tracker_id).feed_id).title, Feed.find_by_id(Tracker.find_by_id(s.tracker_id).feed_id).link %></td>
         <td class="code"><%= Tracker.find_by_id(s.tracker_id).regex %></td>
         <td><%= s.frequency == 1 and  "Every day" or s.frequency.to_s + ' days'%></td>
-        <td><%= s.date_lastmail.strftime("%d %b %Y, %H:%M") %></td>
+        <td><%= s.date_lastmail.strftime(DATE_FORMAT) %></td>
         <td class="action"><%= link_to_image 'cancel.png', url_for(:controller => 'subscription', :action => 'destroy', :id => s.id) %></td>
       </tr>
     <% end -%>
@@ -52,7 +52,7 @@
             <td><%= link_to Article.find_by_id(k.article_id).title, Article.find_by_id(k.article_id).url %></td>
             <td><%= Article.find_by_id(k.article_id).description %></td>
             <!-- TODO: localize datetime -->
-            <td><%= Article.find_by_id(k.article_id).publication_date.strftime("%d %b %Y, %H:%M") %></td>
+            <td><%= Article.find_by_id(k.article_id).publication_date.strftime(DATE_FORMAT) %></td>
             <td><%= Tracker.find_by_id(k.tracker_id).title %></td>
           </tr>
         <% end %>
