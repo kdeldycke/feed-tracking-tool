@@ -36,15 +36,34 @@ class TrackerController < ApplicationController
     end
   end
 
+  # Method to subscribe directly to a tracker
+  def subscribe
+    tracker = Tracker.find(params[:id])
+    if not tracker.blank?
+      profile = Profile.find(session[:user][:profile_id])
+      if Subscription.find(:all, :conditions => {:profile_id => profile.id, :tracker_id => tracker.id}).size > 0
+        flash[:warning] = "You already subscribed to the tracker."
+      else
+        subscription = Subscription.new( {:frequency =>  profile.default_frequency,
+                                          :tracker_id => tracker.id,
+                                          :profile_id => profile.id,
+                                          :date_lastmail => (Time.now - (profile.default_frequency.to_i*3600*24))}) # XXX Duplicate code with subscription controler
+        subscription.save
+        flash[:notice] = "Tracker subscribed !"
+      end
+    end
+    redirect_to :controller => 'tracker'  # Go back to default view
+  end
+
   # Method that delete a feed from the database
   def delete
     tracker = Tracker.find(params[:id])
     if tracker.subscriptions_count > 0
-      flash[:warning] = "Can't remove tracker as long as users are still using it."
+      flash[:warning] = "Can't delete tracker as long as users are still using it."
     else
       tracker.destroy
       tracker.save
-      flash[:notice] = 'Tracker deleted !'
+      flash[:notice] = "Tracker deleted !"
     end
     redirect_to :controller => 'tracker'  # Go back to default view
   end
