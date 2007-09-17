@@ -60,26 +60,26 @@ ActionMailer::Base.delivery_method = :msmtp
 
 # Normalize rails root path
 RAILS_PATH = Pathname.new(RAILS_ROOT).realpath.to_s
-# MSMTP config file
-MSMTP_CONF = File.join(RAILS_PATH, "config", "msmtp.conf") # Use config file located in RoR
-File.chmod(0600, MSMTP_CONF)
-FileUtils.chown(ENV['USER'], nil, MSMTP_CONF)
-# MSMTP log file
-MSMTP_LOG = File.join(RAILS_PATH, "log", "msmtp.log")
-if not File.exist? MSMTP_LOG
-  f = File.new(MSMTP_LOG, "w+")
-  f.close
-end
-# MSMTP binary
-MSMTP_BIN = Pathname.new("/usr/bin/msmtp").realpath.to_s  # TODO: generate path dynamiccaly ?
+MSMTP_CONF = File.join(RAILS_PATH, "config", "msmtp.conf")
+MSMTP_LOG  = File.join(RAILS_PATH, "log", "msmtp.log")
+MSMTP_BIN  = Pathname.new("/usr/bin/msmtp").realpath.to_s  # TODO: generate path dynamiccaly ?
 # TODO: Check here that msmtp is installed and available on the system
 
 # Register MSMTP sending method in Action Mailer
 module ActionMailer
   class Base
     def perform_delivery_msmtp(mail)
+      # Adjust MSMTP configuration and log file
+      File.chmod(0600, MSMTP_CONF)
+      FileUtils.chown(ENV['USER'], nil, MSMTP_CONF)
+      if not File.exist? MSMTP_LOG
+        f = File.new(MSMTP_LOG, "w+")
+        f.close
+      end
+      # Build-up MSMTP command-line
       mail_cmd = %(#{MSMTP_BIN} -t -C "#{MSMTP_CONF}" --logfile="#{MSMTP_LOG}" -a provider --)
       logger.info("Try to send mail with MSMTP: `#{mail_cmd}`")
+      # Send the mail
       IO.popen(mail_cmd, "w") do |sm|
         sm.puts(mail.encoded.gsub(/\r/, ''))
         sm.flush
