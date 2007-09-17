@@ -4,6 +4,6 @@ class AddDefaultMailFrequency < ActiveRecord::Migration
   end
 
   def self.down
-    add_column :profile, :default_frequency
+    remove_column :profile, :default_frequency
   end
 end
