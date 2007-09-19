@@ -5,6 +5,7 @@
   <p>Display name: <%= f.text_field :display_name %></p>
   <p>email: <%= f.text_field :email %></p>
   <p>Default mail frequency: <%= f.text_field :default_frequency, :size => '5' %> days</p>
+  <!--p> TODO: Support both HML and pure-text mail content </p-->
   <p>Suspend mail sending: <%= f.check_box :suspend_email %></p>
   <p><%= submit_tag 'Update my preferences'%></p>
 <% end %>
