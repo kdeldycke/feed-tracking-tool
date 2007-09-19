@@ -1,9 +1,10 @@
-<h2>Subscribe to a tracker</h2>
+<h2>Subscribe to trackers</h2>
 
 <%= error_messages_for 'subscription' %>
 <% form_for :subscription do |f| %>
   <!-- TODO: do not include trackers you already subscribed to -->
   <p>Tracker: <%= collection_select(:tracker, :id, Tracker.find(:all, :conditions => "profile_id is NULL or profile_id = " + session[:user][:profile_id].to_s), :id, :title) %></p>
+  <!-- TODO: should be able to subscribe to many trackers at once -->
   <p>Mail frequency: <%= f.text_field :frequency, :size => '5', :value => Profile.find(session[:user][:profile_id]).default_frequency %> days</p>
   <p><%= submit_tag 'Subscribe'%></p>
 <% end %>
