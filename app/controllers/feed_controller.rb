@@ -15,7 +15,7 @@ class FeedController < ApplicationController
 #         begin
           f = FeedTools::Feed.open(feed.url)  # Let FeedTools try to do its best to get the feed
 #         rescue FeedTools::FeedAccessError => e
-#
+#   # This is temporary code that must ensure that page using https protocol are considered as a static page
 #           e.message
 #
 #         end
