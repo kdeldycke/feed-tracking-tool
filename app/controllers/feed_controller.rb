@@ -12,13 +12,13 @@ class FeedController < ApplicationController
       feed = Feed.new(params[:feed])  # Create a temporary local feed
 
       if feed.valid?  # True if object respect model constraints
-        begin
+#         begin
           f = FeedTools::Feed.open(feed.url)  # Let FeedTools try to do its best to get the feed
-        rescue FeedTools::FeedAccessError => e
-
-          e.message
-
-        end
+#         rescue FeedTools::FeedAccessError => e
+#
+#           e.message
+#
+#         end
 
         # If FeedTools guess the feed type it means that the remote document is really a feed
         if f.feed_type
@@ -29,9 +29,8 @@ class FeedController < ApplicationController
 
         # URL is not pointing to something that look like a feed.
         else
-          # Let us consider the URL a static page
+          # Consider the document a static page
           feed.feed_type = "static"
-
           # Let FeedTool re-parse our brand new feed
           f = FeedTools::Feed.new
           # Load FeedTool with our plain feed data using "vanilla" url
