@@ -41,8 +41,8 @@ a:hover {color: }*/
 }
 
 /* Status color code */
-.public , .sent          {color: #67bc64;}
-.private, .pending, .new {color: #fe6600;}
+.public , .sent, .rss, .atom, .cdf {color: #67bc64;}
+.private, .pending, .new, .static  {color: #fe6600;}
 
 
 
