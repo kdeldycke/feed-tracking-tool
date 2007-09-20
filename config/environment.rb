@@ -72,7 +72,7 @@ ActiveRecord::Base.pluralize_table_names = false
 # We use the external MSMTP tool to send mail via SMTPs protocol: ActionMailer doesn't support TLS (yet ?)
 # You can test MSMTP from a shell terminal with following command: `msmtp -d test@mydomain.com`
 # MSMTP documentation: http://msmtp.sourceforge.net/doc/msmtp.html#Configuration-files
-# XXX Why don't use pure ruby based solution like http://blog.pomozov.info/posts/how-to-send-actionmailer-mails-to-gmailcom.html ?
+# TODO: Use pure ruby based solution like http://blog.pomozov.info/posts/how-to-send-actionmailer-mails-to-gmailcom.html ?
 ActionMailer::Base.delivery_method = :msmtp
 
 # Normalize and builed path
@@ -95,7 +95,6 @@ module ActionMailer
       end
       # Build-up MSMTP command-line
       mail_cmd = %(#{MSMTP_BIN} -t -C "#{MSMTP_CONF}" --logfile="#{MSMTP_LOG}" -a provider --)
-      # TODO: set all MSMTP parameters within the command line to avoid all problems related to config file ownership and access rights
       logger.info("Try to send mail with MSMTP: `#{mail_cmd}`")
       # Send the mail
       IO.popen(mail_cmd, "w") do |sm|
