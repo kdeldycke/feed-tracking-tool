@@ -1,6 +1,9 @@
 <h2>Add new feed</h2>
 <%= error_messages_for 'feed' %>
 <% form_for :feed do |f| %>
-  <p>URL: <%= f.text_field :url %> <%= submit_tag 'Add'%></p>
+  <p>URL: <%= f.text_field :url, :size => '60', :value => 'http://' %> <%= submit_tag 'Add'%></p> <!-- TODO: keep user bad value on error; TODO: auto-focus on this field by default -->
   <p>Supported formats: RSS, ATOM, RDF, XML, CDF and anything that advertise itself as a feed.</p>
+  <p>If the given URL is not recognize as a feed, it will be considered as pointing to a
+static page.</p>
+  <!--p>Force static page:  <%= f.check_box :force_static %></p--><!-- TODO: Keep this Force staticx page option ? -->
 <% end %>
