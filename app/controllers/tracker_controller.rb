@@ -1,4 +1,5 @@
 # TODO: Possibility to select several feeds for a tracker
+#       Possibility to select all current (and future) feed to track
 #       Possibility to modify (edit) a tracker
 #       Regular expressions management (now only keywords are handled)
 
