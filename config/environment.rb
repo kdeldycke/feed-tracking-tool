@@ -1,5 +1,21 @@
 # Be sure to restart your web server when you modify this file.
 
+# ************************ FTT GLOBAL CONFIG ************************
+# Constant
+FTT_VERSION = "0.10.0-trunk"
+
+# Date format
+DATE_FORMAT = "%d %b %Y, %H:%M"
+
+# HTTP proxy
+HTTP_PROXY_HOST = "12.34.56.78"
+HTTP_PROXY_PORT = 8080
+
+# Mail config
+MSMTP_BIN = "/usr/bin/msmtp"
+
+# *******************************************************************
+
 # Uncomment below to force Rails into production mode when
 # you don't control web/app server and can't set it the proper way
 # ENV['RAILS_ENV'] ||= 'production'
@@ -58,11 +74,11 @@ ActiveRecord::Base.pluralize_table_names = false
 # XXX Why don't use pure ruby based solution like http://blog.pomozov.info/posts/how-to-send-actionmailer-mails-to-gmailcom.html ?
 ActionMailer::Base.delivery_method = :msmtp
 
-# Normalize rails root path
+# Normalize and builed path
 RAILS_PATH = Pathname.new(RAILS_ROOT).realpath.to_s
 MSMTP_CONF = File.join(RAILS_PATH, "config", "msmtp.conf")
 MSMTP_LOG  = File.join(RAILS_PATH, "log", "msmtp.log")
-MSMTP_BIN  = Pathname.new("/usr/bin/msmtp").realpath.to_s  # TODO: generate path dynamiccaly ?
+MSMTP_BIN  = Pathname.new(MSMTP_BIN).realpath.to_s  # TODO: generate path dynamiccaly ?
 # TODO: Check here that msmtp is installed and available on the system
 
 # Register MSMTP sending method in Action Mailer
@@ -78,6 +94,7 @@ module ActionMailer
       end
       # Build-up MSMTP command-line
       mail_cmd = %(#{MSMTP_BIN} -t -C "#{MSMTP_CONF}" --logfile="#{MSMTP_LOG}" -a provider --)
+      # TODO: set all MSMTP parameters within the command line to avoid all problems related to config file ownership and access rights
       logger.info("Try to send mail with MSMTP: `#{mail_cmd}`")
       # Send the mail
       IO.popen(mail_cmd, "w") do |sm|
@@ -101,10 +118,21 @@ require_dependency 'jcode'
 # Feed tool import and global config
 require 'feed_tools'
 require 'monkey_patch_feed_tool'  # Monkey patch feed tool to force UTF-8 parsing of some html entities
-FeedTools.configurations[:proxy_address] = "12.34.56.78"
-FeedTools.configurations[:proxy_port] = 8080
+FeedTools.configurations[:proxy_address] = HTTP_PROXY_HOST
+FeedTools.configurations[:proxy_port] = HTTP_PROXY_PORT
 
 
-# Application constant
-FTT_VERSION = "0.9.2-trunk"
-DATE_FORMAT = "%d %b %Y, %H:%M"
+# Calculate proxy URL
+HTTP_PROXY_URL = "http://#{HTTP_PROXY_HOST}:#{HTTP_PROXY_PORT}"
+
+
+# Monkey patch feedalizer to support page grabbing through a proxy
+require 'feedalizer'
+class Feedalizer
+  # Backup original grab_page method
+  alias_method :grab_page_orig, :grab_page
+  # Define new grab_page() method with proxy support
+  def grab_page(url)
+    open(url, :proxy => HTTP_PROXY_URL) { |io| Hpricot(io) }
+  end
+end
