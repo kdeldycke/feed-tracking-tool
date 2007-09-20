@@ -5,6 +5,9 @@ FTT_VERSION    = "0.10.0-trunk"
 FTT_PUBLIC_URL = "http://localhost:3000"  # No need of trailing slash
                                           # TODO: Is this can be guessed automaticaly ?
 
+# Articles config
+ARTICLE_EXPIRATION_DELAY = 1.month  # Remove all articles older than a month
+
 # Date format
 DATE_FORMAT = "%d %b %Y, %H:%M"
 
