@@ -9,14 +9,12 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
     ###### Searching of articles in RSS feeds and update of database + Filtering
 
-    remove_old  # Removing of articles published before 1 month ago
-
     # Save current time as fetch date and to print statistics in log file in the future (TODO)
     fetch_date = Time.now
 
     # For each entry of the rssfeed table
-    Rssfeed.find(:all).each do |r|
-      rss_articles(r.url)   # Retrieval of all articles contained in the RSS feed
+    Feed.find(:all).each do |feed|
+      rss_articles(feed.url)   # Retrieval of all articles contained in the RSS feed
       i=0
       while i < @size       # Covering of all items read in the RSS feed
         ex = false
@@ -59,7 +57,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
                           :url => @link[i],
                           :publication_date => @pubDate[i],
                           :description => @description[i],
-                          :rssfeed_id => r.id,
+                          :rssfeed_id => feed.id,
                           :fetch_date => fetch_date)
           art.save
         end
@@ -67,7 +65,11 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
       end
     end
 
-    find_tracked_articles # Finding of all tracked articles
+    # Remove all old articles before performing the tracker matching to not send rotten content...
+    remove_old_articles
+
+     # Finding of all tracked articles
+    find_tracked_articles
 
     # Commit suicide
     logger.info "Feed fetching ended"
@@ -112,23 +114,16 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     end
   end
 
-  # Method for removing articles published before 1 month ago
-  def remove_old
-    # Removing of articles published before 1 month ago
-    # For each entry of the article table
-    Article.find(:all).each do |m|
-      unless m.publication_date.nil?  # Some articles don't have any publication date
-        if m.publication_date < (Time.now - 31.day)  # If the pub-date is older than 1 month ago
-          m.destroy                                   # Removing
-          m.save
-          # The removed article has to be removed from this table as well
-          TrackedArticle.find(:all).each do |t|
-            if t.article_id == m.id
-              t.destroy
-              t.save
-            end
-          end
-        end
+
+  # Method that remove articles older than the fixed expiration delay
+  def remove_old_articles
+    Article.find(:all, :conditions => {:publication_date => "<" + Time.now.ago(ARTICLE_EXPIRATION_DELAY)}).each do |article|
+      article.destroy
+      article.save
+      # The removed article has to be removed from this table as well
+      TrackedArticle.find(:all, :conditions => {:article_id => article.id}).each do |t|
+        t.destroy
+        t.save
       end
     end
   end
