@@ -1,3 +1,6 @@
+# TODO: test https:// and feed:// feeds !
+
+
 class FeedController < ApplicationController
 
 
@@ -35,6 +38,7 @@ class FeedController < ApplicationController
           f = FeedTools::Feed.new
           # Load FeedTool with our plain feed data using "vanilla" url
           f.feed_data = get_feed_from_static_page(feed.url(bypass_dynamic_translation = true))
+          # TODO: french static pages with accents are broken !
         end
 
         # In FeedTools we trust !
@@ -80,7 +84,7 @@ class FeedController < ApplicationController
       flash[:warning] = "No page given to feedalize !"
       redirect_to :controller => 'feed'
     else
-      render :text => feed_data # , :type => "application/pdf" # TODO: make sure http header is good (especially the "application/rss+xml" mime type)
+      render :text => feed_data, :content_type => "application/rss+xml"
     end
   end
 
