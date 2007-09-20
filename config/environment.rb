@@ -1,8 +1,9 @@
 # Be sure to restart your web server when you modify this file.
 
 # ************************ FTT GLOBAL CONFIG ************************
-# Constant
-FTT_VERSION = "0.10.0-trunk"
+FTT_VERSION    = "0.10.0-trunk"
+FTT_PUBLIC_URL = "http://localhost:3000"  # No need of trailing slash
+                                          # TODO: Is this can be guessed automaticaly ?
 
 # Date format
 DATE_FORMAT = "%d %b %Y, %H:%M"

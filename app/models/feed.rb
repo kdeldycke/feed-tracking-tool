@@ -22,7 +22,7 @@ class Feed < ActiveRecord::Base
   def url(bypass_dynamic_translation=false)
     url = self[:url]
     if (not bypass_dynamic_translation) and self[:feed_type] == "static"
-      return "http://localhost:3000/feedalize/#{url}"  # TODO: must be dynamic !
+      return "#{FTT_PUBLIC_URL}/feedalize/#{url}"
     else
       return url
     end
