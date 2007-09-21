@@ -19,11 +19,11 @@
     <% Feed.find(:all, :order => 'title').each do |feed| -%>
       <!-- # TODO: how should we sort feeds by default ? lastest update or by feed url (to group feeds from the same host together ?) -->
       <% # BAD and UGLY logic with view mix !
-        new_articles = Article.find(:all, :conditions => {:feed_id => feed.id, :fetch_date => ">= " + feed.fetch_date.strftime(MYSQL_DATE_FORMAT)}).size
+        new_articles = Article.find(:all, :conditions => {:feed_id => feed.id, :fetch_date => ">= " + (feed.fetch_date.blank? and "" or feed.fetch_date.strftime(MYSQL_DATE_FORMAT))}).size
       %>
       <tr>
         <td class="title"><%= feed.url.blank? and image_tag('feed_icon.png') or link_to_image('feed_icon.png', feed.url) %> <%= feed.link.blank? and feed.title or link_to(feed.title, feed.link) %></td>
-        <td class="<%= feed.feed_type %>"><%= feed.feed_type == "static" and feed.feed_type.capitalize or feed.feed_type.upcase %></td>
+        <td class="<%= feed.state %>"><%= pretty_state(feed) %></td>
         <td><%= feed.description %></td>
         <td><%= Article.find(:all, :conditions => {:feed_id => feed.id}).size %><%= (new_articles > 0) and ", <span class='new'>#{new_articles} new</span>" or "" %></td>
         <td><%= feed.fetch_date and feed.fetch_date.strftime(DATE_FORMAT) or "" %></td>
