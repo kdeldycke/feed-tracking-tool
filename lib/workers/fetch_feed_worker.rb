@@ -80,15 +80,22 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
           article.url              = item.link        if (not update) or (not item.link.blank?)
           article.publication_date = publication_date if (not update) or (not publication_date.blank?)
           article.description      = item.description if (not update) or (not item.description.blank?)
+          # This is just in case of same feed have similar articles. Still ugly. TODO: support multiples feeds for a given article
           article.feed_id          = feed.id          if (not update) or (not feed.id.blank?)
-          article.fetch_date       = fetch_date       if (not update) or (not fetch_date.blank?)
-          article.save
 
-          # Update stats
           if update
-            updated_articles_counter += 1
-            logger.info "Article ##{article.id} updated !"
+            # Save and update the updated article only if value was really updated
+            saved_article_attr   = Article.find(article.id).attributes
+            updated_article_attr = article.attributes
+            if not (saved_article_attr == updated_article_attr)
+              article.fetch_date = fetch_date
+              article.save
+              updated_articles_counter += 1
+              logger.info "Article ##{article.id} updated !"
+            end
           else
+            article.fetch_date = fetch_date
+            article.save
             new_articles_counter += 1
             logger.info "Article ##{article.id} added !"
           end
@@ -123,11 +130,11 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
   # Method for finding of all tracked articles
   def find_tracked_articles
     logger.info "Perform tracker matching..."
-    # Filtering of articles by trackers regular expressions and update of relationship table trackedarticles
-    # For each entry of the tracker table
-    Tracker.find(:all).each do |t|
+
+    # TODO: support true regexp
+    Tracker.find(:all).each do |tracker|
       # And for each entry of the article table
-      Article.find(:all, :conditions => [ "feed_id = ?", t.feed_id ]).each do |e|
+      Article.find(:all, :conditions => [ "feed_id = ?", tracker.feed_id ]).each do |e|
         # Checking of the presence of the regex in the title or the description of the article
 
         inc = false
@@ -143,14 +150,14 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
         if inc == true
           ex = false
           TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
-            if c.tracker_id == t.id and c.article_id == e.id         # If id is the same, the article already exists
+            if c.tracker_id == tracker.id and c.article_id == e.id         # If id is the same, the article already exists
               ex = true
             end
           end
           if ex == false     # Article doesn't exist in trackedarticle table
             # Creation of a new entry in the relationship table
             tr=TrackedArticle.new(:article_id => e.id,
-                                  :tracker_id => t.id)
+                                  :tracker_id => tracker.id)
             tr.save
           end
         end
