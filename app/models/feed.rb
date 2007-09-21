@@ -8,6 +8,7 @@ class Feed < ActiveRecord::Base
   validates_presence_of :url
   validates_uniqueness_of :url
 
+  validates_presence_of :feed_type
 
   # Inspired by http://www.nshb.net/node/252
   # We should use a combination of FeedTools nomalize method (which take care of URL of the rss:// and feed:// form) and http://www.igvita.com/blog/2006/09/07/validating-url-in-ruby-on-rails/
