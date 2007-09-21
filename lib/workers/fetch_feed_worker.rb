@@ -1,88 +1,96 @@
 # TODO: do not use worker but task to embedded this code. This will allow us to remove the "suicide" code.
+# TODO: see models/article.rb file
 
 class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
-  # TODO: Voir fichier article.rb
 
+  # This method:
+  #   1- download each feed
+  #   2- save its articles
+  #   3- remove expired articles
+  #   4- perform the tracker matching
   def do_work(args)
     logger.info "Start feed fetcher"
-
-    ###### Searching of articles in RSS feeds and update of database + Filtering
-
-    # Save current time as fetch date and to print statistics in log file in the future (TODO)
-    fetch_date = Time.now
-
-    # For each entry of the rssfeed table
-    Feed.find(:all).each do |feed|
-      rss_articles(feed.url)   # Retrieval of all articles contained in the RSS feed
-      i=0
-      while i < @size       # Covering of all items read in the RSS feed
-        ex = false
-        Article.find(:all).each do |a|    # For each entry of the article table
-          if a.url == @link[i]                      # If the url is the same, the article already exists
-            if a.title == @title[i]                 # We check the title for an eventual update
-              if @description[i].nil? # Some articles are referred in several feeds which don't have description -> we don't want to lose content
-                ex = true
-              else
-                if a.description == @description[i]   # Idem for description
-                  ex = true
-                else            # If description is different, we destroy the article (then recreate it)
-                  a.destroy
-                  a.save
-                  # The removed article has to be removed from this table as well
-                  TrackedArticle.find(:all).each do |t|
-                    if t.article_id == a.id
-                      t.destroy
-                      t.save
-                    end
-                  end
-                end
-              end
-            else              # If title is different, we destroy the article (then recreate it)
-              a.destroy
-              a.save
-              # The removed article has to be removed from this table as well
-              TrackedArticle.find(:all).each do |t|
-                if t.article_id == a.id
-                  t.destroy
-                  t.save
-                end
-              end
-            end
-          end
-        end
-        if ex == false     # The article doesn't exist in the article table
-          # Creation of a new entry in the article table
-          art=Article.new(:title => @title[i],
-                          :url => @link[i],
-                          :publication_date => @pubDate[i],
-                          :description => @description[i],
-                          :rssfeed_id => feed.id,
-                          :fetch_date => fetch_date)
-          art.save
-        end
-        i+=1
-      end
-    end
-
+    update_all_feeds
     # Remove all old articles before performing the tracker matching to not send rotten content...
     remove_old_articles
-
-     # Finding of all tracked articles
+    # Finding of all tracked articles
     find_tracked_articles
-
-    # Commit suicide
     logger.info "Feed fetching ended"
+    # Commit suicide
     self.delete
   end
 
+
+  def update_all_feeds
+    logger.info "Update all feeds..."
+    # Init article count for stats
+    new_articles_counter = 0
+    # Parse each feed that was not updated after the given delay
+    feed_list = Feed.find(:all, :conditions => ["fetch_date = NULL OR fetch_date < ?", Time.now.ago(FEED_UPDATE_DELAY).strftime(MYSQL_DATE_FORMAT)])
+    feed_list.each do |feed|
+      # Parse feed through FeelTool
+      source = FeedTools::Feed.open(feed.url)
+
+      # TODO: update here feeds details if necessary
+
+      # Update feed fetch time at the end of the parsing so if a feed take more than the worker frenquency to be parsed, it will be fetched less often. This is discreet perfomance self-tunning ! ;)
+      # On the other hand, update it before adding articles else our new articles counter will not work
+      fetch_date = Time.now
+      feed.update_attribute :fetch_date, fetch_date
+      logger.info "Feed ##{feed.id} updated !"
+
+      # Save each item in the database
+      source.items.each do |item|
+
+        # Fix publication date => TODO: should be done in model ?
+        publication_date = item.time
+        if item.time.blank?
+          publication_date = fetch_date
+        end
+
+        # Create a new entry in the database
+        article = Article.create(:title => item.title,
+                                 :url => item.link,
+                                 :publication_date => publication_date,
+                                 :description => item.description,
+                                 :feed_id => feed.id,
+                                 :fetch_date => fetch_date)
+        new_articles_counter += 1
+        logger.info "Article ##{article.id} added !"
+      end
+    end
+    logger.info "#{feed_list.size} feeds updated"
+    logger.info "#{new_articles_counter} articles added"
+  end
+
+
+  # Method that remove articles older than the fixed expiration delay
+  def remove_old_articles
+    logger.info "Clean-up article database: remove old articles..."
+    article_list = Article.find(:all, :conditions => ["publication_date = NULL OR publication_date < ?", Time.now.ago(ARTICLE_EXPIRATION_DELAY).strftime(MYSQL_DATE_FORMAT)])
+    article_list.each do |article|
+      article.destroy
+      article.save
+      # The removed article has to be removed from this table as well
+      TrackedArticle.find(:all, :conditions => {:article_id => article.id}).each do |t|
+        t.destroy
+        t.save
+      end
+      logger.info "Article ##{article.id} removed !"
+    end
+    logger.info "#{article_list.size} articles removed"
+  end
+
+
   # Method for finding of all tracked articles
   def find_tracked_articles
+    logger.info "Perform tracker matching..."
     # Filtering of articles by trackers regular expressions and update of relationship table trackedarticles
     # For each entry of the tracker table
     Tracker.find(:all).each do |t|
       # And for each entry of the article table
-      Article.find(:all, :conditions => [ "rssfeed_id = ?", t.rssfeed_id ]).each do |e|
+      Article.find(:all, :conditions => [ "feed_id = ?", t.feed_id ]).each do |e|
         # Checking of the presence of the regex in the title or the description of the article
 
         inc = false
@@ -111,37 +119,6 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
         end
 
       end
-    end
-  end
-
-
-  # Method that remove articles older than the fixed expiration delay
-  def remove_old_articles
-    Article.find(:all, :conditions => {:publication_date => "<" + Time.now.ago(ARTICLE_EXPIRATION_DELAY)}).each do |article|
-      article.destroy
-      article.save
-      # The removed article has to be removed from this table as well
-      TrackedArticle.find(:all, :conditions => {:article_id => article.id}).each do |t|
-        t.destroy
-        t.save
-      end
-    end
-  end
-
-  # Method for retrieving articles from an RSS feed using the Feedtools parser
-  def rss_articles(url)
-    @pubDate = []
-    @title = []
-    @link = []
-    @description = []
-    @i=0;
-    feed = FeedTools::Feed.open(url)          # Opening url
-    @size = feed.items.size                   # Number of items read in the RSS feed
-    feed.items.each_with_index do |item, i|   # Retrieving of the RSS feed fields
-      @pubDate[i]     = item.time
-      @title[i]       = item.title
-      @link[i]        = item.link
-      @description[i] = item.description
     end
   end
 
