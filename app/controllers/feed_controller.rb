@@ -41,17 +41,18 @@ class FeedController < ApplicationController
           # TODO: french static pages with accents are broken !
         end
 
-        # In FeedTools we trust !
-        feed.link        = f.link
-        feed.title       = f.title
-        feed.description = f.description
-
         # Do not add a feed that already exist in database
         if Feed.find(:all, :conditions => {:url => feed.url(bypass_dynamic_translation = true)}).size > 0
           flash[:notice] = "This feed was already added to database."
         else
-          feed.save  # Save Object
-          flash[:notice] = "New feed added. Articles from this feed will be fetched within the hour."
+          # In FeedTools we trust !
+          feed.link        = f.link
+          feed.title       = f.title
+          feed.description = f.description
+          feed.fetch_date  = Time.now.ago(FEED_UPDATE_DELAY) # Fetch feed as soon as possible !
+          # Save Object
+          feed.save
+          flash[:notice] = "New feed added. Articles from this feed will be fetched in less than 10 minutes."
         end
 
       else
