@@ -6,7 +6,8 @@ FTT_PUBLIC_URL = "http://localhost:3000"  # No need of trailing slash
                                           # TODO: Is this can be guessed automaticaly ?
 
 # Articles config
-ARTICLE_EXPIRATION_DELAY = 1.month  # Remove all articles older than a month
+FEED_UPDATE_DELAY        = 60 * 60           # Update a feed every hour (= 60 minutes * 60 seconds)
+ARTICLE_EXPIRATION_DELAY = 31 * 24 * 60 * 60 # Remove all articles older than a month (= 31 days * 24 hours * 60 minutes * 60 seconds)
 
 # Date format
 DATE_FORMAT = "%d %b %Y, %H:%M"
