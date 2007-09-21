@@ -43,6 +43,7 @@ a:hover {color: }*/
 /* Status color code */
 .public , .sent, .rss, .atom, .cdf {color: #67bc64;}
 .private, .pending, .new, .static  {color: #fe6600;}
+/* {color: #dd4a4a;} => Red state, not used yet */
 
 
 
