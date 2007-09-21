@@ -140,3 +140,7 @@ class Feedalizer
     open(url, :proxy => HTTP_PROXY_URL) { |io| Hpricot(io) }
   end
 end
+
+
+# TODO: search for a rails generic method to convert Time object to mysql datetime
+MYSQL_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
