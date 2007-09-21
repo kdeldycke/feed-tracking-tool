@@ -130,40 +130,23 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
   # Method for finding of all tracked articles
   def find_tracked_articles
     logger.info "Perform tracker matching..."
-
-    # TODO: support true regexp
+    new_matches = 0
+    # TODO: support true regexp and google-like keyword list
     Tracker.find(:all).each do |tracker|
-      # And for each entry of the article table
-      Article.find(:all, :conditions => [ "feed_id = ?", tracker.feed_id ]).each do |e|
-        # Checking of the presence of the regex in the title or the description of the article
-
-        inc = false
-        if e.title.include? t.regex
-          inc = true
-        else
-          unless e.description.nil?
-            if e.description.include? t.regex
-              inc = true
-            end
+      Article.find(:all, :conditions => {:feed_id => tracker.feed_id}).each do |article|
+        # Look for matching strings in title and description of the article
+        if ((not article.title.blank?) and article.title.include? tracker.regex) or ((not article.description.blank?) and article.description.include? tracker.regex)
+          # Add the article in tracked database if not already there
+          if TrackedArticle.find(:all, :conditions => {:tracker_id => tracker.id, :article_id => article.id}).size == 0
+            matching = TrackedArticle.new(:article_id => article.id,
+                                          :tracker_id => tracker.id)
+            matching.save
+            new_matches += 1
           end
         end
-        if inc == true
-          ex = false
-          TrackedArticle.find(:all).each do |c|    # For each entry of the trackedarticle table
-            if c.tracker_id == tracker.id and c.article_id == e.id         # If id is the same, the article already exists
-              ex = true
-            end
-          end
-          if ex == false     # Article doesn't exist in trackedarticle table
-            # Creation of a new entry in the relationship table
-            tr=TrackedArticle.new(:article_id => e.id,
-                                  :tracker_id => tracker.id)
-            tr.save
-          end
-        end
-
       end
     end
+    logger.info "#{new_matches} new articles match trackers"
   end
 
 
