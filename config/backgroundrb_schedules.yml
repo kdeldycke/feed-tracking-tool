@@ -4,4 +4,4 @@ mail_tick:
 
 feed_tick:
   :class: fetch_feed_worker
-  :trigger_args: 0 */10 * * * * *
+  :trigger_args: 0 0,10,20,30,40,50 * * * * *
