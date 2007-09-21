@@ -4,13 +4,12 @@ class BuildAndSendMailWorker < BackgrounDRb::Worker::RailsBase
 
   # This method aggregate articles of a given subscription ("build") and then send a mail.
   def do_work(args)
-    logger.info "Start mail sending"
+    logger.info "Start mail sending..."
 
     # Send one mail per subscription
     Subscription.find(:all).each do |s|
-
       # Take care of this subscription only if the time between the last mail and now is greater (or equal) than the frequency
-      if ((Time.now - s.date_lastmail) / (3600*24)) >= s.frequency
+      if s.date_lastmail <= Time.now.ago(s.frequency * 24 * 60 * 60)
         logger.info "Last mail sent more than #{s.frequency} days ago for subscription ##{s.id}"
 
         # Build the list of articles to send
@@ -46,15 +45,15 @@ class BuildAndSendMailWorker < BackgrounDRb::Worker::RailsBase
 
           # Update the last mail date here: this will force FTT to send a mail as soon as possible if no articles match after the frenquency is reached.
           # Use the "last mail + frenquency" date instead of "now" to keep the mail to be sent at the same moment of the day (= same HH:MM:ss)
-          s.update_attribute :date_lastmail, s.date_lastmail+s.frequency.day
+          s.update_attribute :date_lastmail, s.date_lastmail + s.frequency.day
         end
 
       end
 
     end
 
-    # Commit suicide
     logger.info "Mail sending ended"
+    # Commit suicide
     self.delete
   end
 
