@@ -2,13 +2,10 @@ class Feed < ActiveRecord::Base
 
   has_many :trackers
 
-
   # Feed URL is a lind of a primary key
   # TODO: should be names "URI" as this acronym reflect the true unique nature of feed access path
   validates_presence_of :url
   validates_uniqueness_of :url
-
-  validates_presence_of :feed_type
 
   # Inspired by http://www.nshb.net/node/252
   # We should use a combination of FeedTools nomalize method (which take care of URL of the rss:// and feed:// form) and http://www.igvita.com/blog/2006/09/07/validating-url-in-ruby-on-rails/
@@ -17,6 +14,32 @@ class Feed < ActiveRecord::Base
 #                       :with => /^http:\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(([0-9]{1,5})?\/.*)?$/ix,
 #                       :message => "Malformated URL."
 
+
+  # Tiny method to make our life easier ! :)
+  def is_static?
+    if self[:feed_type] == "static"
+      return true
+    end
+    return false
+  end
+
+  # A feed in a pending state is a feed that was just added by the user and was not yet fetched yet
+  def is_pending?
+    if self[:fetch_date].blank?
+      return true
+    end
+    return false
+  end
+
+  # Return a keyword that give the current status of the feed
+  def state
+    if self.is_pending?
+      return "pending"
+    elsif self[:feed_type].blank?
+      return "unknown"
+    end
+    return self[:feed_type]
+  end
 
   # Override default url getter to use our internal feedalizer tool to transform the static page to a feed.
   # We can still get the true url thanks to the bypass_dynamic_translation parameter.
