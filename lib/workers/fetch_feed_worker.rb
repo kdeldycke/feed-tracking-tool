@@ -25,8 +25,9 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
   def update_all_feeds
     logger.info "Update all feeds..."
-    # Init article count for stats
-    new_articles_counter = 0
+    # Init stats counters
+    new_articles_counter     = 0
+    updated_articles_counter = 0
     # Parse each feed that was not updated after the given delay
     feed_list = Feed.find(:all, :conditions => ["fetch_date is NULL OR fetch_date <= ?", Time.now.ago(FEED_UPDATE_DELAY).strftime(MYSQL_DATE_FORMAT)])
     feed_list.each do |feed|
@@ -62,23 +63,42 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
           publication_date = fetch_date
         end
 
-        # TODO: manage duplicate and updated articles
+        # Do not add articles that are too old
+        if publication_date > Time.now.ago(ARTICLE_EXPIRATION_DELAY)
 
-        # TODO: Do not add articles that are older than the expiry !
+          update = false
+          if Article.find(:all, :conditions => {:url => item.link}).size > 0
+            # Article already exist in database: extract it.
+            article = Article.find_by_url(item.link)
+            update = true
+          else
+            article = Article.new()
+          end
 
-        # Create a new entry in the database
-        article = Article.create(:title => item.title,
-                                 :url => item.link,
-                                 :publication_date => publication_date,
-                                 :description => item.description,
-                                 :feed_id => feed.id,
-                                 :fetch_date => fetch_date)
-        new_articles_counter += 1
-        logger.info "Article ##{article.id} added !"
+          # Update properties if necessary
+          article.title            = item.title       if (not update) or (not item.title.blank?)
+          article.url              = item.link        if (not update) or (not item.link.blank?)
+          article.publication_date = publication_date if (not update) or (not publication_date.blank?)
+          article.description      = item.description if (not update) or (not item.description.blank?)
+          article.feed_id          = feed.id          if (not update) or (not feed.id.blank?)
+          article.fetch_date       = fetch_date       if (not update) or (not fetch_date.blank?)
+          article.save
+
+          # Update stats
+          if update
+            updated_articles_counter += 1
+            logger.info "Article ##{article.id} updated !"
+          else
+            new_articles_counter += 1
+            logger.info "Article ##{article.id} added !"
+          end
+
+        end
       end
     end
     logger.info "#{feed_list.size} feeds updated"
     logger.info "#{new_articles_counter} articles added"
+    logger.info "#{updated_articles_counter} articles updated"
   end
 
 
