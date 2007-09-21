@@ -1,16 +1,17 @@
 # TODO: do not use worker but task to embedded this code. This will allow us to remove the "suicide" code.
 # TODO: see models/article.rb file
 
+require "feedalizer_tool"
+
 class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
 
 
   # This method:
-  #   1- download each feed
-  #   2- save its articles
-  #   3- remove expired articles
-  #   4- perform the tracker matching
+  #   1- download each feed and save its articles
+  #   2- remove expired articles
+  #   3- perform the tracker matching
   def do_work(args)
-    logger.info "Start feed fetcher"
+    logger.info "Start feed fetcher..."
     update_all_feeds
     # Remove all old articles before performing the tracker matching to not send rotten content...
     remove_old_articles
@@ -27,27 +28,43 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
     # Init article count for stats
     new_articles_counter = 0
     # Parse each feed that was not updated after the given delay
-    feed_list = Feed.find(:all, :conditions => ["fetch_date = NULL OR fetch_date < ?", Time.now.ago(FEED_UPDATE_DELAY).strftime(MYSQL_DATE_FORMAT)])
+    feed_list = Feed.find(:all, :conditions => ["fetch_date is NULL OR fetch_date <= ?", Time.now.ago(FEED_UPDATE_DELAY).strftime(MYSQL_DATE_FORMAT)])
     feed_list.each do |feed|
-      # Parse feed through FeelTool
-      source = FeedTools::Feed.open(feed.url)
 
-      # TODO: update here feeds details if necessary
+      # Parse feed with FeelTool
+      if feed.is_static?
+        f = FeedTools::Feed.new
+        # Load FeedTool with our plain feed data using "vanilla" url
+        f.feed_data = FeedalizerTools.get_feed_from_static_page(feed.url(bypass_dynamic_translation = true))
+        # TODO: french static pages with accents are broken !
+      else
+        f = FeedTools::Feed.open(feed.url)
+      end
 
+      # Update feeds details new values
+      # Force update if feed is pending as we use temporary values for title and description (see FeedController.add methods)
+      feed.link        = f.link        if (feed.is_pending?) or (not f.link.blank?)
+      feed.title       = f.title       if (feed.is_pending?) or (not f.title.blank?)
+      feed.description = f.description if (feed.is_pending?) or (not f.description.blank?)
       # Update feed fetch time at the end of the parsing so if a feed take more than the worker frenquency to be parsed, it will be fetched less often. This is discreet perfomance self-tunning ! ;)
       # On the other hand, update it before adding articles else our new articles counter will not work
       fetch_date = Time.now
-      feed.update_attribute :fetch_date, fetch_date
+      feed.fetch_date = fetch_date
+      feed.save
       logger.info "Feed ##{feed.id} updated !"
 
       # Save each item in the database
-      source.items.each do |item|
+      f.items.each do |item|
 
-        # Fix publication date => TODO: should be done in model ?
+        # Fix publication date if not given => TODO: should be done in model ?
         publication_date = item.time
         if item.time.blank?
           publication_date = fetch_date
         end
+
+        # TODO: manage duplicate and updated articles
+
+        # TODO: Do not add articles that are older than the expiry !
 
         # Create a new entry in the database
         article = Article.create(:title => item.title,
@@ -68,7 +85,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
   # Method that remove articles older than the fixed expiration delay
   def remove_old_articles
     logger.info "Clean-up article database: remove old articles..."
-    article_list = Article.find(:all, :conditions => ["publication_date = NULL OR publication_date < ?", Time.now.ago(ARTICLE_EXPIRATION_DELAY).strftime(MYSQL_DATE_FORMAT)])
+    article_list = Article.find(:all, :conditions => ["publication_date is NULL OR publication_date <= ?", Time.now.ago(ARTICLE_EXPIRATION_DELAY).strftime(MYSQL_DATE_FORMAT)])
     article_list.each do |article|
       article.destroy
       article.save
@@ -121,6 +138,7 @@ class FetchFeedWorker < BackgrounDRb::Worker::RailsBase
       end
     end
   end
+
 
 end
 

@@ -23,36 +23,33 @@ class FeedController < ApplicationController
 #
 #         end
 
+        # While pending, use feed.url as temporary title. The feed fetcher will update the title.
+        feed.title = feed.url
+        # As above, use a temporary descriptive description.
+        feed.description = "This feed will be fetched in less than 10 minutes."
+
         # If FeedTools guess the feed type it means that the remote document is really a feed
         if f.feed_type
           # Perform here actions specific to true feeds...
           feed.feed_type = f.feed_type
           # Force feed URL update because sometimes FeedTool is able to found the feed embedded in a static page automaticaly.
           feed.url = f.url
-
         # URL is not pointing to something that look like a feed.
         else
           # Consider the document a static page
           feed.feed_type = "static"
-          # Let FeedTool re-parse our brand new feed
-          f = FeedTools::Feed.new
-          # Load FeedTool with our plain feed data using "vanilla" url
-          f.feed_data = get_feed_from_static_page(feed.url(bypass_dynamic_translation = true))
-          # TODO: french static pages with accents are broken !
         end
+
+        # Do not set feed.fetch_date: the feed fetcher will fetch the feed as soon as possible when its fetch_date value is NULL
+
+        # Save Object
+        feed.save
 
         # Do not add a feed that already exist in database
         if Feed.find(:all, :conditions => {:url => feed.url(bypass_dynamic_translation = true)}).size > 0
           flash[:notice] = "This feed was already added to database."
         else
-          # In FeedTools we trust !
-          feed.link        = f.link
-          feed.title       = f.title
-          feed.description = f.description
-          feed.fetch_date  = Time.now.ago(FEED_UPDATE_DELAY) # Fetch feed as soon as possible !
-          # Save Object
-          feed.save
-          flash[:notice] = "New feed added. Articles from this feed will be fetched in less than 10 minutes."
+          flash[:notice] = "New feed added. It will be fetched in less than 10 minutes."
         end
 
       else
@@ -74,11 +71,13 @@ class FeedController < ApplicationController
   # Method that wrap a static page in a feed
   # Ex: to feedalize the google home page, go to http://www.mydomain.com/feedalize/http://www.google.com
   def feedalize
+    require 'feedalizer_tool'
+
     # Trick required to let RoR parse URLs with options given as parameter in routes
     self.rebuild_dynamic_parameters
 
     # Build the feed
-    feed_data = get_feed_from_static_page(@uri)
+    feed_data = FeedalizerTools.get_feed_from_static_page(@uri)
 
     # Render the feed
     if feed_data.blank?
@@ -124,50 +123,6 @@ protected
       logger.info "!!!parameter trick: " + query_params.inspect
       @uri << "?" << query_params.join("&")
     end
-  end
-
-
-private
-
-  # Method to transform a static page to a RSS 1.0 feed
-  def get_feed_from_static_page(url)
-    feed_xml = nil
-
-    if url.size > 0  # TODO: perform other validation stuff
-      # The date of the feed / article is when we fetch the page
-      date = Time.now
-
-      # Fetch static page
-      @page = Feedalizer.new(url)  # TODO: is it necessary to declare page as instance variable ?
-
-      # Tiny method to get the inner content of the first html tag given as parameter
-      def getHtmlTagContent(tag)
-        content = ""
-        tag_list = @page.source.search(tag)
-        if tag_list.size > 0
-          content = tag_list.first.inner_html
-        end
-        return content
-      end
-
-      # Set feed attributes using static page attributes
-      @page.feed.about       = url
-      @page.feed.title       = getHtmlTagContent("title")
-      @page.feed.description = getHtmlTagContent("description")
-
-      # Make content of the first <body> tag the only feed item
-      @page.scrape_items("body", limit = 1) do |rss_item, html_element|
-        rss_item.link  = url
-        rss_item.date  = date
-        rss_item.title = @page.feed.title  # + " | " + rss_item.date.strftime(DATE_FORMAT) XXX Not a good idea to add date in title
-        rss_item.description = html_element.inner_html  # TODO: sanitize html content ?
-      end
-
-      # Output RSS 1.0 XML content
-      feed_xml = @page.output
-    end
-
-    return feed_xml
   end
 
 end
