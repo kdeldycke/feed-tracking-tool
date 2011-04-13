@@ -4,6 +4,7 @@ require 'feed_tools'
 # Monkey patch feed tool.
 # Use case mixed UTF-8 chars and html entities: <description>Téléchargements et Multim&#233;dia</description>
 # TODO: send test case to Python Universal Feed Parser and patch to Feed Tool project.
+# More info about this patch here: http://kevin.deldycke.com/2008/07/how-to-fix-rubys-feedtools-latin-1-parsing/
 module FeedTools::HtmlHelper
   class << self
 
