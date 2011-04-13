@@ -131,6 +131,7 @@ HTTP_PROXY_URL = "http://#{HTTP_PROXY_HOST}:#{HTTP_PROXY_PORT}"
 
 
 # Monkey patch feedalizer to support page grabbing through a proxy
+# Get more info at http://kevin.deldycke.com/2008/07/how-to-add-proxy-support-to-feedalizer-ruby-library/
 require 'feedalizer'
 class Feedalizer
   # Backup original grab_page method
