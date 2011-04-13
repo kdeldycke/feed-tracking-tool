@@ -40,7 +40,18 @@ Support
 Ruby on Rails setup
 -------------------
 
-1.  Install a Ruby on Rails development environment.
+1.  Install a Ruby on Rails development environment:
+
+        $ apt-get install ruby rubygems
+
+    Eventually register your HTTP proxy:
+
+        $ export HTTP_PROXY='http://12.34.56.78:8080'
+
+    Install all other libraries with gem:
+
+        $ gem update --system
+        $ gem install rails mysql feedtools ruby-net-ldap daemons slave feedalizer -y
 
 1.  Get the list of local gems:
 
@@ -67,6 +78,10 @@ Ruby on Rails setup
 
         $ gem install <gem>
 
+1.  Install the MySQL server:
+
+        $ apt-get install mysql-server
+
 1.  Install msmtp with your favorite package manager. Example:
 
         $ apt-get install msmtp
@@ -75,7 +90,12 @@ Ruby on Rails setup
 
         $ git clone git@github.com:kdeldycke/feed-tracking-tool.git /var/www/
 
-1.  Create a MySQL database and update the `config/database.yml` file accordingly.
+1.  Create a MySQL database and update the `config/database.yml` file accordingly:
+
+        $ mysql -h localhost -u root --disable-pager -e "CREATE DATABASE IF NOT EXISTS FTT_development;"
+        $ mysql -h localhost -u root --disable-pager -e "CREATE DATABASE IF NOT EXISTS FTT_test;"
+        $ mysql -h localhost -u root --disable-pager -e "CREATE DATABASE IF NOT EXISTS FTT_production;"
+        $ vi config/database.yml
 
 1.  Update RoR version in the `config/environnment.rb` file to make it match the RoR version installed on your system:
 
